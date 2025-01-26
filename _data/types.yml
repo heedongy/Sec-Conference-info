@@ -1,0 +1,21 @@
+---
+- name: Security
+  tag: SEC
+- name: Software engineering
+  tag: SE
+- name: Security (Top Conference)
+  tag: SEC-TOP
+- name: Software engineering (Top Conference)
+  tag: SE-TOP
+- name: Conference
+  tag: CONF
+- name: Workshop
+  tag: SHOP
+- name: BK21-IF 4
+  tag: BKIF-4
+- name: BK21-IF 3
+  tag: BKIF-3
+- name: BK21-IF 2
+  tag: BKIF-2
+- name: BK21-IF 1
+  tag: BKIF-1
