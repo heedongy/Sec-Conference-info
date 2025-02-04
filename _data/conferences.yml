@@ -42,7 +42,7 @@
     - "2024-07-10 23:59"
   date: "February 23-28"
   place: San Diego, CA, USA
-  tags: [SEC, CONF, SEC-TOP, BKIF-3]
+  tags: [SEC, CONF, SEC-TOP, BKIF-2]
 
 - name: ESORICS
   description: European Symposium on Research in Computer Security
@@ -66,16 +66,6 @@
   place: Hanoi, Vietnam
   tags: [SEC, CONF, BKIF-1]
 
-- name: WiSec
-  description: ACM Conference on Security and Privacy in Wireless and Mobile Networks
-  year: 2025
-  link: https://wisec2025.gmu.edu/
-  deadline:
-    - "2024-11-21 23:59"
-    - "2025-03-12 23:59"
-  date: June 30 - July 3
-  place: Arlington, Virginia, USA
-  tags: [SEC, CONF, BKIF-1]
 
 - name: Euro S&P
   description: IEEE European Symposium on Security and Privacy
@@ -85,7 +75,7 @@
   deadline: ["2024-10-24 23:59"]
   date: "June 30 - July 4"
   place: Venice, Italy
-  tags: [SEC, CONF, BKIF-3]
+  tags: [SEC, CONF]
 
 - name: WWW
   description: World Wide Web Conference
@@ -147,7 +137,7 @@
   deadline: ["2025-05-30 23:59"]
   date: "November 16-20"
   place: Seoul, South Korea
-  tags: [SE, CONF, SE-TOP, BKIF-2]
+  tags: [SE, CONF, SE-TOP, BKIF-3]
 
 - name: FSE
   description: Foundations of Software Engineering
@@ -156,7 +146,7 @@
   deadline: ["2024-09-12 23:59"]
   date: "June 23-27"
   place: Trondheim, Norway
-  tags: [SE, CONF, SE-TOP, BKIF-1]
+  tags: [SE, CONF, SE-TOP, BKIF-4]
 
 - name: PLDI
   description: Programming Language Design and Implementation
