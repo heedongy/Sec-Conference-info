@@ -151,3 +151,7 @@ footer a {
     font-size: 2rem;
   }
 }
+.bg-red {
+  background-color: #dc3545 !important;
+  color: white !important;
+}

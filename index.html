@@ -35,8 +35,8 @@
             <div class="col-lg-12">
               <h3>Security & Software Engineering Conference Deadline(Selected)</h3>
               <p> The D-day countdown is based on the deadlines for "Research Papers Full Paper Submission"</p>
-              <p class="lead text-muted">{{ site.english_description }}</p>
-              <p class="lead text-muted">{{ site.description }}</p>
+              <p class="lead text-muted">{{ site.english_description }} (To add/update a conference) <a target="_blank" href="//github.com/{{ site.github_username }}/{{ site.github_repo }}">Please request to add or modify the conference by PR.</a></p>
+              <p class="lead text-muted">{{ site.description }}<a target="_blank" href="//github.com/{{ site.github_username }}/{{ site.github_repo }}">  학회 추가 및 수정은 PR로 요청해주세요.</a></p>
               <iframe src="https://ghbtns.com/github-btn.html?user={{ site.github_username }}&repo={{ site.github_repo }}&type=star&count=true" frameborder="0" scrolling="0" width="170px" height="20px"></iframe>
             </div>
           </div>
@@ -83,6 +83,7 @@
                   {{ conf.description }}<br>
                   {{conf.date | replace: '-', '–'}}
                   {% if conf.place %}// <a href="http://maps.google.com/?q={{conf.place}}">{{conf.place}}</a>{% endif %}
+                  {% if conf.tags contains 'BKIF-4' %}// <span class="badge bg-red fw-bold">BK21-IF 4</span>{% elsif conf.tags contains 'BKIF-3' %}// <span class="badge bg-red fw-bold">BK21-IF 3</span>{% elsif conf.tags contains 'BKIF-2' %}// <span class="badge bg-dark fw-bold">BK21-IF 2</span>{% elsif conf.tags contains 'BKIF-1' %}// <span class="badge bg-dark fw-bold">BK21-IF 1</span>{% endif %}
                 </div>
               </div>
               <div class="col-lg-6">
