@@ -102,11 +102,11 @@
 
 - name: ACM SAC
   description: ACM/SIGAPP Symposium On Applied Computing
-  year: 2025
-  link: https://www.sigapp.org/sac/sac2025/
-  deadline: ["2024-10-04 23:59"]
-  date: "March 31 - April 4"
-  place: Catania, Italy
+  year: 2026
+  link: https://www.sigapp.org/sac/sac2026
+  deadline: ["2025-09-26 23:59"]
+  date: "March 23-27"
+  place: Thessaloniki, Greece
   tags: [SEC, CONF, BKIF-1]
 
 - name: ACSAC
@@ -125,7 +125,7 @@
   deadline: ["2025-12-04 23:59"]
   comment: Abstract deadline on Nov 27
   date: "June 22-25"
-  place: https://dsn2026.github.io
+  place: Charlotte, USA
   tags: [SEC, CONF, BKIF-2]
 
 # Software Engineering
