@@ -69,12 +69,12 @@
 
 - name: Euro S&P
   description: IEEE European Symposium on Security and Privacy
-  year: 2025
-  comment: Abstract registration October 21st AoE (firm).
-  link: https://eurosp2025.ieee-security.org/
-  deadline: ["2024-10-24 23:59"]
-  date: "June 30 - July 4"
-  place: Venice, Italy
+  year: 2026
+  comment: Abstract registration 13 November 2025 AoE.
+  link: https://eurosp2026.ieee-security.org/
+  deadline: ["2025-11-20 23:59"]
+  date: "July 6-10"
+  place: Lisbon, Portugal
   tags: [SEC, CONF]
 
 - name: WWW
@@ -170,11 +170,11 @@
 
 - name: ISSTA
   description: International Symposium on Software Testing and Analysis
-  year: 2025
-  link: https://conf.researchr.org/home/issta-2025
-  deadline: ["2024-10-31 23:59"]
-  date: "June 25-28"
-  place: Trondheim, Norway
+  year: 2026
+  link: https://conf.researchr.org/home/issta-2026
+  deadline: ["2026-01-29 23:59"]
+  date: "October 3-9"
+  place: Oakland, California, USA
   tags: [SE, CONF, BKIF-2]
 
 - name: ICST
