@@ -80,11 +80,11 @@
 - name: WWW
   description: World Wide Web Conference
   year: 2025
-  link: https://www2025.thewebconf.org/
-  deadline: ["2024-10-14 23:59"]
-  date: "28 April - 2 May 2025"
-  place: Sydney, Australia
-  tags: [CONF, BKIF-3]
+  link: https://www2026.thewebconf.org/
+  deadline: ["2025-10-7 23:59"]
+  date: "April 13 – 17, 2026"
+  place: Dubai, United Arab Emirates
+  tags: [CONF, BKIF-4]
 
 
 # Networks and Systems, Applications
@@ -161,11 +161,11 @@
 
 - name: PLDI
   description: Programming Language Design and Implementation
-  year: 2025
-  link: https://pldi25.sigplan.org/
-  deadline: ["2024-11-14 23:59"]
-  date: "June 16-20"
-  place: Seoul, South Korea
+  year: 2026
+  link: https://pldi26.sigplan.org/
+  deadline: ["2025-11-13 23:59"]
+  date: "June 15-19"
+  place: Boulder, Colorado, United States
   tags: [SE, CONF, SE-TOP, BKIF-4]
 
 - name: ISSTA
