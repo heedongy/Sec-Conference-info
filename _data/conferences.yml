@@ -66,7 +66,6 @@
   place: Bangalore, India
   tags: [SEC, CONF, BKIF-1]
 
-
 - name: Euro S&P
   description: IEEE European Symposium on Security and Privacy
   year: 2026
@@ -76,6 +75,15 @@
   date: "July 6-10"
   place: Lisbon, Portugal
   tags: [SEC, CONF]
+  
+- name: IFIP SEC
+  description: IFIP International Information Security and Privacy Conference
+  year: 2026
+  link: https://ifipsec.org/cfp.html
+  deadline: ["2025-12-19 23:59"]
+  date: June 9 - 11
+  place: Perth, Australia
+  tags: [SEC, CONF, BKIF-1]
 
 - name: WWW
   description: World Wide Web Conference
