@@ -195,3 +195,12 @@
   place: Daejeon, South Korea
   tags: [SE, CONF, BKIF-1]
 
+- name: SANER
+  description: International Conference on Software Analysis, Evolution and Reengineering
+  year: 2026
+  link: https://conf.researchr.org/home/saner-2026
+  deadline: ["2025-10-09 23:59"]
+  date: "Tue 17 - Fri 20 March 2026"
+  place: Limassol, Cyprus
+  tags: [SE, CONF]
+
