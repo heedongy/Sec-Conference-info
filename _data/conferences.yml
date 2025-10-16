@@ -113,6 +113,7 @@
   year: 2026
   link: https://www.sigapp.org/sac/sac2026
   deadline: ["2025-10-17 23:59"]
+  timezone: America/New_York
   date: "March 23-27"
   place: Thessaloniki, Greece
   tags: [SEC, CONF, BKIF-1]
