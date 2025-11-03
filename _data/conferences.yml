@@ -79,10 +79,19 @@
 - name: IFIP SEC
   description: IFIP International Information Security and Privacy Conference
   year: 2026
-  link: https://ifipsec.org/cfp.html
+  link: https://ifipsec.org
   deadline: ["2025-12-19 23:59"]
   date: June 9 - 11
   place: Perth, Australia
+  tags: [SEC, CONF, BKIF-1]
+
+- name: CSF
+  description: IEEE Computer Security Foundations Symposium
+  year: 2026
+  link: https://csf2026.ieee-security.org
+  deadline: ["2026-1-29 23:59"]
+  date: July 26 - 29
+  place: Lisbon, Portugal
   tags: [SEC, CONF, BKIF-1]
 
 - name: WWW
