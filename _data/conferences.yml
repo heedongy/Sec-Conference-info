@@ -161,11 +161,11 @@
 
 - name: ASE
   description: International Conference on Automated Software Engineering
-  year: 2025
-  link: https://conf.researchr.org/home/ase-2025
-  deadline: ["2025-05-30 23:59"]
-  date: "November 16-20"
-  place: Seoul, South Korea
+  year: 2026
+  link: https://conf.researchr.org/home/ase-2026
+  deadline: ["2026-03-26 23:59"]
+  date: "October 12-16"
+  place: Munich, Germany
   tags: [SE, CONF, SE-TOP, BKIF-3]
 
 - name: FSE
