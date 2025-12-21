@@ -45,16 +45,81 @@
             <div class="col-12">
               <div class="p-3 bg-light rounded">
                 <p class="mb-2 fw-bold">Filter by tags:</p>
-                <form class="form-inline">
-                  <div class="d-flex flex-wrap gap-3">
-                    {% for type in site.data.types %}
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="{{ type.tag }}-checkbox">
-                      <label class="form-check-label" for="{{ type.tag }}-checkbox">
-                        {{ type.name }}
-                      </label>
+                <form class="form-inline" id="filter-form">
+                  <!-- Topic -->
+                  <div class="mb-3">
+                    <span class="fw-semibold me-3">Topic:</span>
+                    <div class="d-inline-flex gap-3">
+                      <div class="form-check">
+                        <input class="form-check-input field-radio" type="radio" name="field" id="ALL-radio" value="ALL" checked>
+                        <label class="form-check-label" for="ALL-radio">All</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input field-radio" type="radio" name="field" id="SEC-radio" value="SEC">
+                        <label class="form-check-label" for="SEC-radio">Security</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input field-radio" type="radio" name="field" id="SE-radio" value="SE">
+                        <label class="form-check-label" for="SE-radio">Software Engineering</label>
+                      </div>
                     </div>
-                    {% endfor %}
+                  </div>
+
+                  <!-- Top Conference  -->
+                  <div class="mb-3" id="top-section">
+                    <span class="fw-semibold me-3">Top Conference:</span>
+                    <div class="d-inline-flex gap-3">
+                      <div class="form-check">
+                        <input class="form-check-input top-radio" type="radio" name="topconf" id="TOP-ALL-radio" value="ALL" checked>
+                        <label class="form-check-label" for="TOP-ALL-radio">All</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input top-radio" type="radio" name="topconf" id="TOP-YES-radio" value="YES">
+                        <label class="form-check-label" for="TOP-YES-radio">Only Top</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- BK21-IF -->
+                  <div class="mb-3" id="bkif-section">
+                    <span class="fw-semibold me-3">BK21-IF:</span>
+                    <div class="d-inline-flex gap-3">
+                      <div class="form-check">
+                        <input class="form-check-input bkif-checkbox" type="checkbox" id="BKIF-4-checkbox" value="BKIF-4">
+                        <label class="form-check-label" for="BKIF-4-checkbox">4</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input bkif-checkbox" type="checkbox" id="BKIF-3-checkbox" value="BKIF-3">
+                        <label class="form-check-label" for="BKIF-3-checkbox">3</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input bkif-checkbox" type="checkbox" id="BKIF-2-checkbox" value="BKIF-2">
+                        <label class="form-check-label" for="BKIF-2-checkbox">2</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input bkif-checkbox" type="checkbox" id="BKIF-1-checkbox" value="BKIF-1">
+                        <label class="form-check-label" for="BKIF-1-checkbox">1</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Type -->
+                  <div class="mb-2">
+                    <span class="fw-semibold me-3">Type:</span>
+                    <div class="d-inline-flex gap-3">
+                      <div class="form-check">
+                        <input class="form-check-input type-radio" type="radio" name="conftype" id="TYPE-ALL-radio" value="ALL" checked>
+                        <label class="form-check-label" for="TYPE-ALL-radio">All</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input type-radio" type="radio" name="conftype" id="CONF-radio" value="CONF">
+                        <label class="form-check-label" for="CONF-radio">Conference</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input type-radio" type="radio" name="conftype" id="SHOP-radio" value="SHOP">
+                        <label class="form-check-label" for="SHOP-radio">Workshop</label>
+                      </div>
+                    </div>
                   </div>
                 </form>
               </div>
@@ -127,3 +192,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
+

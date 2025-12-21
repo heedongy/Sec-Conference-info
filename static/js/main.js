@@ -94,64 +94,138 @@ $(function() {
   });
   $('.conf-container').append(confs);
 
-  // Set checkboxes
-  var conf_type_data = {{ site.data.types | jsonify }};
-  var all_tags = [];
-  var toggle_status = {};
-  for (var i = 0; i < conf_type_data.length; i++) {
-    all_tags[i] = conf_type_data[i]['tag'];
-    toggle_status[all_tags[i]] = false;
+  // Filter state management
+  var filterState = {
+    field: 'ALL',
+    topconf: 'ALL',
+    bkif: [],
+    conftype: 'ALL'
+  };
+
+  // Load saved state
+  var savedState = store.get('{{ site.domain }}_filter_v3');
+  if (savedState) {
+    filterState = savedState;
+    if (!Array.isArray(filterState.bkif)) {
+      filterState.bkif = [];
+    }
+    if (filterState.field !== 'ALL') {
+      $('#' + filterState.field + '-radio').prop('checked', true);
+    } else {
+      $('#ALL-radio').prop('checked', true);
+    }
+    if (filterState.topconf === 'YES') {
+      $('#TOP-YES-radio').prop('checked', true);
+    } else {
+      $('#TOP-ALL-radio').prop('checked', true);
+    }
+    // Restore BK21-IF checkbox state
+    filterState.bkif.forEach(function(bk) {
+      $('#' + bk + '-checkbox').prop('checked', true);
+    });
+    if (filterState.conftype !== 'ALL') {
+      $('#' + filterState.conftype + '-radio').prop('checked', true);
+    } else {
+      $('#TYPE-ALL-radio').prop('checked', true);
+    }
   }
-  var tags = store.get('{{ site.domain }}');
-  if (tags === undefined) {
-    tags = all_tags;
-  }
-  for (var i = 0; i < tags.length; i++) {
-    $('#' + tags[i] + '-checkbox').prop('checked', false);
-    toggle_status[tags[i]] = false;
-  }
-  store.set('{{ site.domain }}', tags);
 
   function update_conf_list() {
     confs.each(function(i, conf) {
-      var conf = $(conf);
-      var show = false;
-      var set_tags = [];
-      for (var i = 0; i < all_tags.length; i++) {
-        // if tag has been selected by user, check if the conference has it
-        if(toggle_status[all_tags[i]]) {
-          set_tags.push(conf.hasClass(all_tags[i]));
+      var $conf = $(conf);
+      var show = true;
+
+      // 1. Field filter (SEC or SE)
+      if (filterState.field !== 'ALL') {
+        if (!$conf.hasClass(filterState.field)) {
+          show = false;
         }
       }
-      let empty_or_all_true = arr => arr.every(Boolean);
-      // show a conference if it has all user-selected tags
-      // if no tag is set (= array is empty), show all entries
-      show = empty_or_all_true(set_tags);
+
+      // 2. Top Conference filter
+      if (show && filterState.topconf === 'YES') {
+        // Check the TOP tag for the selected field
+        if (filterState.field === 'SEC') {
+          if (!$conf.hasClass('SEC-TOP')) {
+            show = false;
+          }
+        } else if (filterState.field === 'SE') {
+          if (!$conf.hasClass('SE-TOP')) {
+            show = false;
+          }
+        } else {
+          // If all fields are selected, show if it has SEC-TOP or SE-TOP
+          if (!$conf.hasClass('SEC-TOP') && !$conf.hasClass('SE-TOP')) {
+            show = false;
+          }
+        }
+      }
+
+      // 3. BK21-IF filter (show if matches any selected)
+      if (show && filterState.bkif.length > 0) {
+        var hasBkif = false;
+        for (var j = 0; j < filterState.bkif.length; j++) {
+          if ($conf.hasClass(filterState.bkif[j])) {
+            hasBkif = true;
+            break;
+          }
+        }
+        if (!hasBkif) {
+          show = false;
+        }
+      }
+
+      // 4. Type filter (CONF or SHOP)
+      if (show && filterState.conftype !== 'ALL') {
+        if (!$conf.hasClass(filterState.conftype)) {
+          show = false;
+        }
+      }
+
       if (show) {
-        conf.show();
+        $conf.show();
       } else {
-        conf.hide()
+        $conf.hide();
       }
     });
   }
   update_conf_list();
 
-  // Event handler on checkbox change
-  $('form :checkbox').change(function(e) {
-    var checked = $(this).is(':checked');
-    var tag = $(this).prop('id').slice(0, -9);
-    toggle_status[tag] = checked;
-
-    if (checked == true) {
-      if (tags.indexOf(tag) < 0)
-        tags.push(tag);
-    }
-    else {
-      var idx = tags.indexOf(tag);
-      if (idx >= 0)
-        tags.splice(idx, 1);
-    }
-    store.set('{{ site.domain }}', tags);
+  // Field radio button event
+  $('.field-radio').change(function(e) {
+    filterState.field = $(this).val();
+    store.set('{{ site.domain }}_filter_v3', filterState);
     update_conf_list();
   });
-});
+
+  // Top Conference radio button event
+  $('.top-radio').change(function(e) {
+    filterState.topconf = $(this).val();
+    store.set('{{ site.domain }}_filter_v3', filterState);
+    update_conf_list();
+  });
+
+  // BK21-IF checkbox event
+  $('.bkif-checkbox').change(function(e) {
+    var val = $(this).val();
+    var checked = $(this).is(':checked');
+    if (checked) {
+      if (filterState.bkif.indexOf(val) === -1) {
+        filterState.bkif.push(val);
+      }
+    } else {
+      var idx = filterState.bkif.indexOf(val);
+      if (idx !== -1) {
+        filterState.bkif.splice(idx, 1);
+      }
+    }
+    store.set('{{ site.domain }}_filter_v3', filterState);
+    update_conf_list();
+  });
+
+  // Type radio button event
+  $('.type-radio').change(function(e) {
+    filterState.conftype = $(this).val();
+    store.set('{{ site.domain }}_filter_v3', filterState);
+    update_conf_list();
+  });
