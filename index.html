@@ -16,6 +16,97 @@
       .custom-nav-color {
         background-color: #8b0029
       }
+      /* Calendar Styles */
+      .calendar {
+        font-family: 'Inter', sans-serif;
+        max-width: 280px;
+      }
+      .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+      }
+      .calendar-header h5 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+      .calendar-nav {
+        background: none;
+        border: 1px solid #dee2e6;
+        border-radius: 3px;
+        padding: 0.15rem 0.4rem;
+        cursor: pointer;
+        font-size: 0.85rem;
+      }
+      .calendar-nav:hover {
+        background: #e9ecef;
+      }
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 1px;
+        text-align: center;
+      }
+      .calendar-weekday {
+        font-weight: 600;
+        font-size: 0.7rem;
+        color: #6c757d;
+        padding: 0.25rem 0;
+      }
+      .calendar-day {
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        border-radius: 50%;
+        cursor: default;
+        position: relative;
+        margin: 1px;
+      }
+      .calendar-day.other-month {
+        color: #ced4da;
+      }
+      .calendar-day.today {
+        background: #e9ecef;
+        font-weight: 600;
+      }
+      .calendar-day.has-deadline {
+        background: #8b0029;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .calendar-day.has-deadline:hover {
+        background: #a30030;
+      }
+      .calendar-day .deadline-dot {
+        position: absolute;
+        bottom: 1px;
+        width: 3px;
+        height: 3px;
+        background: #8b0029;
+        border-radius: 50%;
+      }
+      .calendar-day.has-deadline .deadline-dot {
+        background: white;
+      }
+      .deadline-tooltip {
+        position: absolute;
+        background: #333;
+        color: white;
+        padding: 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        z-index: 1000;
+        max-width: 200px;
+        white-space: normal;
+        text-align: left;
+        display: none;
+      }
     </style>
   </head>
   <body class="bg-light">
@@ -41,15 +132,39 @@
             </div>
           </div>
 
-          <div class="row mb-4">
-            <div class="col-12">
-              <div class="p-3 bg-light rounded">
+          <div class="d-flex flex-wrap gap-3 mb-4">
+            <!-- Calendar Section -->
+            <div class="flex-shrink-0">
+              <div class="p-3 bg-light rounded d-flex align-items-center justify-content-center">
+                <div class="calendar">
+                  <div class="calendar-header">
+                    <button class="calendar-nav" id="prev-month">&lt;</button>
+                    <h5 id="calendar-title"></h5>
+                    <button class="calendar-nav" id="next-month">&gt;</button>
+                  </div>
+                  <div class="calendar-grid">
+                    <div class="calendar-weekday">Sun</div>
+                    <div class="calendar-weekday">Mon</div>
+                    <div class="calendar-weekday">Tue</div>
+                    <div class="calendar-weekday">Wed</div>
+                    <div class="calendar-weekday">Thu</div>
+                    <div class="calendar-weekday">Fri</div>
+                    <div class="calendar-weekday">Sat</div>
+                  </div>
+                  <div class="calendar-grid" id="calendar-days"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="flex-grow-1">
+              <div class="p-3 bg-light rounded h-100 d-flex flex-column justify-content-center">
                 <p class="mb-2 fw-bold">Filter by tags:</p>
                 <form class="form-inline" id="filter-form">
                   <!-- Topic -->
                   <div class="mb-3">
                     <span class="fw-semibold me-3">Topic:</span>
-                    <div class="d-inline-flex gap-3">
+                    <div class="d-inline-flex gap-3 flex-wrap">
                       <div class="form-check">
                         <input class="form-check-input field-radio" type="radio" name="field" id="ALL-radio" value="ALL" checked>
                         <label class="form-check-label" for="ALL-radio">All</label>

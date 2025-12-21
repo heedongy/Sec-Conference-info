@@ -229,3 +229,116 @@ $(function() {
     store.set('{{ site.domain }}_filter_v3', filterState);
     update_conf_list();
   });
+
+  // ========== Calendar ==========
+  var currentMonth = moment();
+
+  // Collect all deadlines with conference info
+  var allDeadlines = {};
+  for (var confId in deadlineByConf) {
+    var deadline = deadlineByConf[confId];
+    if (deadline) {
+      var dateKey = deadline.format('YYYY-MM-DD');
+      if (!allDeadlines[dateKey]) {
+        allDeadlines[dateKey] = [];
+      }
+      // Extract conference name from ID
+      var confName = confId.replace(/-\d+$/, '').replace(/-/g, ' ').toUpperCase();
+      allDeadlines[dateKey].push({
+        id: confId,
+        name: confName,
+        time: deadline.format('HH:mm')
+      });
+    }
+  }
+
+  function renderCalendar() {
+    var $container = $('#calendar-days');
+    $container.empty();
+
+    // Update title
+    $('#calendar-title').text(currentMonth.format('MMMM YYYY'));
+
+    // Get first day of month and total days
+    var firstDay = currentMonth.clone().startOf('month');
+    var lastDay = currentMonth.clone().endOf('month');
+    var startDayOfWeek = firstDay.day();
+    var totalDays = lastDay.date();
+
+    // Previous month days
+    var prevMonth = currentMonth.clone().subtract(1, 'month');
+    var prevMonthDays = prevMonth.daysInMonth();
+    for (var i = startDayOfWeek - 1; i >= 0; i--) {
+      var day = prevMonthDays - i;
+      var $day = $('<div class="calendar-day other-month"></div>').text(day);
+      $container.append($day);
+    }
+
+    // Current month days
+    var todayStr = moment().format('YYYY-MM-DD');
+    for (var d = 1; d <= totalDays; d++) {
+      var dateStr = currentMonth.format('YYYY-MM') + '-' + String(d).padStart(2, '0');
+      var $day = $('<div class="calendar-day"></div>').text(d);
+      $day.attr('data-date', dateStr);
+
+      // Today highlight
+      if (dateStr === todayStr) {
+        $day.addClass('today');
+      }
+
+      // Deadline highlight
+      if (allDeadlines[dateStr]) {
+        $day.addClass('has-deadline');
+        var deadlineList = allDeadlines[dateStr];
+        var tooltipText = deadlineList.map(function(dl) {
+          return dl.name + ' (' + dl.time + ')';
+        }).join('\n');
+        $day.attr('title', tooltipText);
+
+        // Click to scroll to conference
+        $day.css('cursor', 'pointer');
+        $day.on('click', function() {
+          var date = $(this).attr('data-date');
+          var deadlines = allDeadlines[date];
+          if (deadlines && deadlines.length > 0) {
+            var targetId = deadlines[0].id;
+            var $target = $('#' + targetId);
+            if ($target.length) {
+              $('html, body').animate({
+                scrollTop: $target.offset().top - 100
+              }, 500);
+              $target.addClass('border border-3 border-warning');
+              setTimeout(function() {
+                $target.removeClass('border border-3 border-warning');
+              }, 2000);
+            }
+          }
+        });
+      }
+
+      $container.append($day);
+    }
+
+    // Next month days (fill remaining grid)
+    var totalCells = $container.children().length;
+    var remaining = 42 - totalCells; // 6 rows x 7 days
+    for (var n = 1; n <= remaining; n++) {
+      var $day = $('<div class="calendar-day other-month"></div>').text(n);
+      $container.append($day);
+    }
+  }
+
+  // Calendar navigation
+  $('#prev-month').on('click', function() {
+    currentMonth.subtract(1, 'month');
+    renderCalendar();
+  });
+
+  $('#next-month').on('click', function() {
+    currentMonth.add(1, 'month');
+    renderCalendar();
+  });
+
+  // Initial render
+  renderCalendar();
+});
