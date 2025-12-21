@@ -111,10 +111,13 @@
   </head>
   <body class="bg-light">
         <nav class="navbar navbar-expand-lg navbar-dark custom-nav-color">
-          <div class="container">
-            <a class="navbar-brand" href="#">
-                        <img src="/static/img/logo.png" alt="SSP" width="117" height="50" class="d-inline-block align-text-top me-2">
-            {{ site.title }}  <a href="https://ssp.korea.ac.kr" class="text-decoration-none" style="color: #fcfcde;"> SSP Lab @ Korea University</a>
+          <div class="container d-flex align-items-center" style="height: 60px;">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+              <img src="/static/img/logo.png" alt="SSP" width="117" height="50" class="d-inline-block align-text-top me-2">
+              <span class="d-flex align-items-center">
+                {{ site.title }}
+                <a href="https://ssp.korea.ac.kr" class="text-decoration-none ms-2" style="color: #fcfcde;">SSP Lab @ Korea University</a>
+              </span>
             </a>
           </div>
         </nav>
@@ -128,11 +131,16 @@
               <p> The D-day countdown is based on the deadlines for "Research Papers Full Paper Submission"</p>
               <p class="lead text-muted">{{ site.english_description }} (To add/update a conference) <a target="_blank" href="//github.com/{{ site.github_username }}/{{ site.github_repo }}">Please request to add or modify the conference by PR.</a></p>
               <p class="lead text-muted">{{ site.description }}<a target="_blank" href="//github.com/{{ site.github_username }}/{{ site.github_repo }}">  학회 추가 및 수정은 PR로 요청해주세요.</a></p>
-              <iframe src="https://ghbtns.com/github-btn.html?user={{ site.github_username }}&repo={{ site.github_repo }}&type=star&count=true" frameborder="0" scrolling="0" width="170px" height="20px"></iframe>
+              <div class="text-end">
+                <div class="d-inline-flex align-items-center gap-2 mt-2 px-2 py-1 rounded" style="background-color: #9d0000;">
+                  <span class="text-white" style="font-size: 0.8rem;">⭐ Support this project:</span>
+                  <iframe src="https://ghbtns.com/github-btn.html?user={{ site.github_username }}&repo={{ site.github_repo }}&type=star&count=true" frameborder="0" scrolling="0" width="100px" height="20px"></iframe>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="d-flex flex-wrap gap-3 mb-4">
+          <div class="d-flex flex-wrap gap-5 mb-4 justify-content-center">
             <!-- Calendar Section -->
             <div class="flex-shrink-0">
               <div class="p-3 bg-light rounded d-flex align-items-center justify-content-center">
@@ -157,8 +165,8 @@
             </div>
 
             <!-- Filter Section -->
-            <div class="flex-grow-1">
-              <div class="p-3 bg-light rounded h-100 d-flex flex-column justify-content-center">
+            <div class="flex-shrink-0">
+              <div class="p-3 bg-light rounded d-inline-flex flex-column justify-content-center">
                 <p class="mb-2 fw-bold">Filter by tags:</p>
                 <form class="form-inline" id="filter-form">
                   <!-- Topic -->
