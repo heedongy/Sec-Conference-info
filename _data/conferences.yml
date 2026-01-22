@@ -141,13 +141,12 @@
 
 - name: ICSE
   description: International Conference on Software Engineering
-  year: 2026
-  link: https://conf.researchr.org/home/icse-2026
+  year: 2027
+  link: https://conf.researchr.org/home/icse-2027
   deadline:
-    - "2025-03-14 23:59"
-    - "2025-07-18 23:59"
-  date: "April 12-18"
-  place: Rio de Janeiro, Brazil
+    - "2026-06-30 23:59"
+  date: "25 April - 1 May"
+  place: Dublin, Ireland
   tags: [SE, CONF, SE-TOP, BKIF-4]
 
 - name: ASE
