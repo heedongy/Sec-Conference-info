@@ -38,8 +38,8 @@
   year: 2026
   link: https://www.ndss-symposium.org/ndss2026/submissions/call-for-papers/
   deadline:
-    - "2025-04-23 23:59"
-    - "2025-08-06 23:59"
+    - "2026-05-06 23:59"
+    - "2026-08-19 23:59"
   date: "February 23-27"
   place: San Diego, CA, USA
   tags: [SEC, CONF, SEC-TOP, BKIF-2]
@@ -120,11 +120,11 @@
 
 - name: ACSAC
   description: Annual Computer Security Applications Conference
-  year: 2025
+  year: 2026
   link: https://www.acsac.org/
-  deadline: ["2025-05-30 23:59"]
-  date: "December 9-13"
-  place: Honolulu, Hawaii, USA
+  deadline: ["2026-05-26 23:59"]
+  date: "December 7-11"
+  place: Los Angeles, California, USA
   tags: [SEC, CONF, BKIF-2]
 
 - name: DSN
@@ -160,11 +160,11 @@
 
 - name: FSE
   description: Foundations of Software Engineering
-  year: 2026
+  year: 2027
   link: https://conf.researchr.org/home/fse-2026
-  deadline: ["2025-09-11 23:59"]
-  date: "June 23-27"
-  place: Montreal, Canada
+  deadline: ["2026-10-02 23:59"]
+  date: "July 12-16"
+  place: Shenzhen, China
   tags: [SE, CONF, SE-TOP, BKIF-4]
 
 - name: PLDI
