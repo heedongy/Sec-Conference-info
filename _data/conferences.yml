@@ -35,13 +35,13 @@
 
 - name: NDSS
   description: ISOC Network and Distributed System Security Symposium
-  year: 2026
-  link: https://www.ndss-symposium.org/ndss2026/submissions/call-for-papers/
+  year: 2027
+  link: https://www.ndss-symposium.org/ndss2027/submissions/call-for-papers/
   deadline:
     - "2026-05-06 23:59"
     - "2026-08-19 23:59"
-  date: "February 23-27"
-  place: San Diego, CA, USA
+  date: "TBA"
+  place: TBA
   tags: [SEC, CONF, SEC-TOP, BKIF-2]
 
 - name: ESORICS
@@ -161,7 +161,7 @@
 - name: FSE
   description: Foundations of Software Engineering
   year: 2027
-  link: https://conf.researchr.org/home/fse-2026
+  link: https://conf.researchr.org/home/fse-2027
   deadline: ["2026-10-02 23:59"]
   date: "July 12-16"
   place: Shenzhen, China
