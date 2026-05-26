@@ -99,13 +99,13 @@
 
 - name: EuroSys
   description: European Conference on Computer Systems
-  year: 2026
-  link: https://2026.eurosys.org
+  year: 2027
+  link: https://2027.eurosys.org
   deadline:
-    - "2025-05-08 23:59"
-    - "2025-09-18 23:59"
-  date: "April 13-16"
-  place: Edinburgh, Scotland
+    - "2026-05-14 23:59"
+    - "2026-09-24 23:59"
+  date: "April 19—23"
+  place: Rabat, Morocco
   tags: [SEC, CONF, BKIF-2]
 
 - name: ACM SAC
@@ -197,10 +197,10 @@
 
 - name: SANER
   description: International Conference on Software Analysis, Evolution and Reengineering
-  year: 2026
-  link: https://conf.researchr.org/home/saner-2026
-  deadline: ["2025-10-09 23:59"]
-  date: "Tue 17 - Fri 20 March 2026"
-  place: Limassol, Cyprus
+  year: 2027
+  link: https://conf.researchr.org/home/saner-2027
+  deadline: ["2026-09-25 23:59"]
+  date: "March 9-12"
+  place: Richmond, Virginia, USA
   tags: [SE, CONF]
 
