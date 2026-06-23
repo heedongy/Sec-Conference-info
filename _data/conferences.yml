@@ -110,12 +110,12 @@
 
 - name: ACM SAC
   description: ACM/SIGAPP Symposium On Applied Computing
-  year: 2026
-  link: https://www.sigapp.org/sac/sac2026
-  deadline: ["2025-10-17 23:59"]
+  year: 2027
+  link: https://www.sigapp.org/sac/sac2027
+  deadline: ["2027-10-2 23:59"]
   timezone: America/New_York
-  date: "March 23-27"
-  place: Thessaloniki, Greece
+  date: "April 5-9"
+  place: Gwangju, South Korea
   tags: [SEC, CONF, BKIF-1]
 
 - name: ACSAC
