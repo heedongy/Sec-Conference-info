@@ -86,12 +86,12 @@
   tags: [SEC, CONF, BKIF-1]
 
 - name: WWW
-  description: World Wide Web Conference
-  year: 2026
-  link: https://www2026.thewebconf.org/
-  deadline: ["2025-10-7 23:59"]
-  date: "April 13 – 17, 2026"
-  place: Dubai, United Arab Emirates
+  description: The Web Conference
+  year: 2027
+  link: https://acmweb2027.org/
+  deadline: ["2026-10-18 23:59"]
+  date: "May 10 – 14, 2027"
+  place: Dublin, Ireland
   tags: [CONF, BKIF-4]
 
 
