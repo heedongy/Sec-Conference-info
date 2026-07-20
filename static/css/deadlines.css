@@ -7,7 +7,7 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Pretendard', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 16px;
   line-height: 1.6;
   color: var(--text-color);
@@ -37,15 +37,97 @@ h1.display-5 {
 }
 
 .lead {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
   color: var(--muted-color);
+}
+
+/* Page header */
+.page-title {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.35rem;
+}
+
+.page-subtitle {
+  color: var(--muted-color);
+  font-size: 0.95rem;
+}
+
+.pr-suggest-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid #dee2e6;
+  color: var(--text-color);
+  font-size: 0.82rem;
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.pr-suggest-btn:hover {
+  background: #f8f9fa;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+/* Search box */
+.search-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #e9ecef;
+  background: #f8f9fa;
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.88rem;
+  font-family: inherit;
+  color: var(--text-color);
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.search-input:focus {
+  background: #fff;
+  border-color: var(--primary-color);
+}
+
+.search-input::placeholder {
+  color: #adb5bd;
+}
+
+/* Add to calendar link */
+.add-calendar-btn {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.65rem;
+  border: 1px solid #e9ecef;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-color);
+  text-decoration: none;
+  vertical-align: middle;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.add-calendar-btn:hover {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* Empty filter result state */
+#empty-state {
+  font-size: 0.95rem;
 }
 
 /* Card styling */
 .card {
-  border: none;
+  border: 1px solid #eee;
   border-radius: var(--border-radius);
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .card:hover {
@@ -54,6 +136,20 @@ h1.display-5 {
 
 .card-body {
   padding: 1.5rem;
+}
+
+/* Softer, more restrained shadows than Bootstrap's default utility */
+.shadow-sm {
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+.card:hover.shadow-sm {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+.badge {
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 /* Conference card */
@@ -92,19 +188,56 @@ h1.display-5 {
   font-weight: 500;
 }
 
-/* Tag filter */
-.form-check-input {
-  cursor: pointer;
+/* Tag filter — pill-style toggle chips */
+.filter-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--muted-color);
+  margin-bottom: 0.6rem;
 }
 
-.form-check-input:checked {
-  background-color: var(--primary-color);
-  border-color: var(--primary-color);
+.form-check {
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+}
+
+.form-check-input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
 }
 
 .form-check-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.42rem 1.05rem;
+  border-radius: 999px;
+  background: #f1f3f5;
+  color: #495057;
+  font-size: 0.85rem;
+  font-weight: 500;
   cursor: pointer;
   user-select: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.form-check-label:hover {
+  background: #e9ecef;
+}
+
+.form-check-input:checked + .form-check-label {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.form-check-input:focus-visible + .form-check-label {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
 /* Past conference style */

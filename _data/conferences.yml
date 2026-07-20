@@ -1,205 +1,246 @@
-# Security and Privacy
+# =============================================================================
+# Security and Software Engineering Conference Info
+# =============================================================================
+# 구조: 각 컨퍼런스에 editions 배열로 연도별 정보를 관리합니다.
+# Date format: "YYYY-MM-DD/YYYY-MM-DD" (for calendar view) or "TBA"
+# Adding a new year: Simply add a new item to the `editions` array.
+# Editions without a deadline will not appear as cards, but will show up on the calendar.
+# =============================================================================
+
+# ─── Security and Privacy ────────────────────────────────────────────────────
+
 - name: S&P (Oakland)
-  year: 2027
-  date: TBA
   description: IEEE Symposium on Security and Privacy
-  link: https://sp2027.ieee-security.org/
-  deadline:
-    - "2026-06-11 23:59"
-    - "2026-11-17 23:59"
-  place: MONTREAL, CANADA
   tags: [SEC, CONF, SEC-TOP, BKIF-4]
+  editions:
+    - year: 2027
+      date: "TBA"
+      link: https://sp2027.ieee-security.org/
+      deadline:
+        - "2026-06-11 23:59"
+        - "2026-11-17 23:59"
+      place: Montreal, Canada
 
 - name: CCS
   description: ACM Conference on Computer and Communications Security
-  year: 2026
-  link: https://www.sigsac.org/ccs/CCS2026
-  deadline:
-    - "2026-01-14 23:59"
-    - "2026-04-29 23:59"
-  comment: Abstract registration required (1 week before deadline AoE).
-  date: "November 15-19"
-  place: The Hague, The Netherlands
   tags: [SEC, CONF, SEC-TOP, BKIF-4]
+  editions:
+    - year: 2026
+      date: "2026-11-15/2026-11-19"
+      link: https://www.sigsac.org/ccs/CCS2026
+      deadline:
+        - "2026-01-14 23:59"
+        - "2026-04-29 23:59"
+      comment: Abstract registration required (1 week before deadline AoE).
+      place: The Hague, The Netherlands
 
 - name: USENIX Security
   description: USENIX Security Symposium
-  year: 2027
-  link: https://www.usenix.org/conference/usenixsecurity27
-  deadline:
-    - "2026-08-25 23:59"
-    - "2027-01-26 23:59"
-  date: "August 11-13"
-  place: Denver, CO, USA
   tags: [SEC, CONF, SEC-TOP, BKIF-3]
+  editions:
+    - year: 2027
+      date: "2027-08-11/2027-08-13"
+      link: https://www.usenix.org/conference/usenixsecurity27
+      deadline:
+        - "2026-08-25 23:59"
+        - "2027-01-26 23:59"
+      place: Denver, CO, USA
 
 - name: NDSS
   description: ISOC Network and Distributed System Security Symposium
-  year: 2027
-  link: https://www.ndss-symposium.org/ndss2027/submissions/call-for-papers/
-  deadline:
-    - "2026-05-06 23:59"
-    - "2026-08-19 23:59"
-  date: "March 22-26"
-  place: Seoul
   tags: [SEC, CONF, SEC-TOP, BKIF-2]
+  editions:
+    - year: 2027
+      date: "2027-03-22/2027-03-26"
+      link: https://www.ndss-symposium.org/ndss2027/submissions/call-for-papers/
+      deadline:
+        - "2026-05-06 23:59"
+        - "2026-08-19 23:59"
+      place: Seoul
 
 - name: ESORICS
   description: European Symposium on Research in Computer Security
-  year: 2026
-  link: https://sites.google.com/di.uniroma1.it/esorics2026
-  deadline:
-    - "2026-01-09 23:59"
-    - "2026-04-21 23:59"
-  date: September
-  place: Rome, Italy
   tags: [SEC, CONF, BKIF-2]
+  editions:
+    - year: 2026
+      date: "TBA"
+      link: https://sites.google.com/di.uniroma1.it/esorics2026
+      deadline:
+        - "2026-01-09 23:59"
+        - "2026-04-21 23:59"
+      comment: September (exact dates TBA)
+      place: Rome, Italy
 
 - name: ASIACCS
   description: ACM Asia Conference on Computer and Communications Security
-  year: 2027
-  link: https://asiaccs2027.cityu.edu.mo/index.html
-  deadline:
-    - "2026-08-21 23:59"
-    - "2026-12-11 23:59"
-  date: "July 12-16"
-  place: Macau
   tags: [SEC, CONF, BKIF-1]
+  editions:
+    - year: 2027
+      date: "2027-07-12/2027-07-16"
+      link: https://asiaccs2027.cityu.edu.mo/index.html
+      deadline:
+        - "2026-08-21 23:59"
+        - "2026-12-11 23:59"
+      place: Macau
 
 - name: Euro S&P
   description: IEEE European Symposium on Security and Privacy
-  year: 2026
-  comment: Abstract registration 13 November 2025 AoE.
-  link: https://eurosp2026.ieee-security.org/
-  deadline: ["2025-11-20 23:59"]
-  date: "July 6-10"
-  place: Lisbon, Portugal
   tags: [SEC, CONF]
-  
+  editions:
+    - year: 2026
+      date: "2026-07-06/2026-07-10"
+      link: https://eurosp2026.ieee-security.org/
+      deadline:
+        - "2025-11-20 23:59"
+      comment: Abstract registration 13 November 2025 AoE.
+      place: Lisbon, Portugal
+
 - name: IFIP SEC
   description: IFIP International Information Security and Privacy Conference
-  year: 2026
-  link: https://ifipsec.org
-  deadline: ["2025-12-19 23:59"]
-  date: June 9 - 11
-  place: Perth, Australia
   tags: [SEC, CONF, BKIF-1]
+  editions:
+    - year: 2026
+      date: "2026-06-09/2026-06-11"
+      link: https://ifipsec.org
+      deadline:
+        - "2025-12-19 23:59"
+      place: Perth, Australia
 
 - name: WWW
-  description: The Web Conference
-  year: 2027
-  link: https://acmweb2027.org/
-  deadline: ["2026-10-18 23:59"]
-  date: "May 10 – 14, 2027"
-  place: Dublin, Ireland
+  description: ACM The Web Conference
   tags: [CONF, BKIF-4]
+  editions:
+    - year: 2027
+      date: "2027-05-10/2027-05-14"
+      link: https://acmweb2027.org/
+      deadline:
+        - "2026-10-18 23:59"
+      place: Dublin, Ireland
 
-
-# Networks and Systems, Applications
+# ─── Networks and Systems, Applications ──────────────────────────────────────
 
 - name: EuroSys
   description: European Conference on Computer Systems
-  year: 2027
-  link: https://2027.eurosys.org
-  deadline:
-    - "2026-05-14 23:59"
-    - "2026-09-24 23:59"
-  date: "April 19—23"
-  place: Rabat, Morocco
   tags: [SEC, CONF, BKIF-2]
+  editions:
+    - year: 2027
+      date: "2027-04-19/2027-04-23"
+      link: https://2027.eurosys.org
+      deadline:
+        - "2026-05-14 23:59"
+        - "2026-09-24 23:59"
+      place: Rabat, Morocco
 
 - name: ACM SAC
   description: ACM/SIGAPP Symposium On Applied Computing
-  year: 2027
-  link: https://www.sigapp.org/sac/sac2027
-  deadline: ["2026-10-02 23:59"]
-  timezone: America/New_York
-  date: "April 5-9"
-  place: Gwangju, South Korea
   tags: [SEC, CONF, BKIF-1]
+  editions:
+    - year: 2027
+      date: "2027-04-05/2027-04-09"
+      link: https://www.sigapp.org/sac/sac2027
+      deadline:
+        - "2026-10-02 23:59"
+      timezone: America/New_York
+      place: Gwangju, South Korea
 
 - name: ACSAC
   description: Annual Computer Security Applications Conference
-  year: 2026
-  link: https://www.acsac.org/
-  deadline: ["2026-05-26 23:59"]
-  date: "December 7-11"
-  place: Los Angeles, California, USA
   tags: [SEC, CONF, BKIF-2]
+  editions:
+    - year: 2026
+      date: "2026-12-07/2026-12-11"
+      link: https://www.acsac.org/
+      deadline:
+        - "2026-05-26 23:59"
+      place: Los Angeles, California, USA
 
 - name: DSN
   description: The International Conference on Dependable Systems and Networks
-  year: 2026
-  link: https://dsn2026.github.io/
-  deadline: ["2025-12-04 23:59"]
-  comment: Abstract deadline on Nov 27
-  date: "June 22-25"
-  place: Charlotte, USA
   tags: [SEC, CONF, BKIF-2]
+  editions:
+    - year: 2026
+      date: "2026-06-22/2026-06-25"
+      link: https://dsn2026.github.io/
+      deadline:
+        - "2025-12-04 23:59"
+      comment: Abstract deadline on Nov 27
+      place: Charlotte, USA
 
-# Software Engineering
+# ─── Software Engineering ────────────────────────────────────────────────────
 
 - name: ICSE
   description: International Conference on Software Engineering
-  year: 2027
-  link: https://conf.researchr.org/home/icse-2027
-  deadline:
-    - "2026-06-30 23:59"
-  date: "25 April - 1 May"
-  place: Dublin, Ireland
   tags: [SE, CONF, SE-TOP, BKIF-4]
+  editions:
+    - year: 2027
+      date: "2027-04-25/2027-05-01"
+      link: https://conf.researchr.org/home/icse-2027
+      deadline:
+        - "2026-06-30 23:59"
+      place: Dublin, Ireland
 
 - name: ASE
   description: International Conference on Automated Software Engineering
-  year: 2026
-  link: https://conf.researchr.org/home/ase-2026
-  deadline: ["2026-03-26 23:59"]
-  date: "October 12-16"
-  place: Munich, Germany
   tags: [SE, CONF, SE-TOP, BKIF-3]
+  editions:
+    - year: 2026
+      date: "2026-10-12/2026-10-16"
+      link: https://conf.researchr.org/home/ase-2026
+      deadline:
+        - "2026-03-26 23:59"
+      place: Munich, Germany
 
 - name: FSE
   description: Foundations of Software Engineering
-  year: 2027
-  link: https://conf.researchr.org/home/fse-2027
-  deadline: ["2026-10-02 23:59"]
-  date: "July 12-16"
-  place: Shenzhen, China
   tags: [SE, CONF, SE-TOP, BKIF-4]
+  editions:
+    - year: 2027
+      date: "2027-07-12/2027-07-16"
+      link: https://conf.researchr.org/home/fse-2027
+      deadline:
+        - "2026-10-02 23:59"
+      place: Shenzhen, China
 
 - name: PLDI
   description: Programming Language Design and Implementation
-  year: 2026
-  link: https://pldi26.sigplan.org/
-  deadline: ["2025-11-13 23:59"]
-  date: "June 15-19"
-  place: Boulder, Colorado, United States
   tags: [SE, CONF, SE-TOP, BKIF-4]
+  editions:
+    - year: 2026
+      date: "2026-06-15/2026-06-19"
+      link: https://pldi26.sigplan.org/
+      deadline:
+        - "2025-11-13 23:59"
+      place: Boulder, Colorado, United States
 
 - name: ISSTA
   description: International Symposium on Software Testing and Analysis
-  year: 2026
-  link: https://conf.researchr.org/home/issta-2026
-  deadline: ["2026-01-29 23:59"]
-  date: "October 3-9"
-  place: Oakland, California, USA
   tags: [SE, CONF, BKIF-2]
+  editions:
+    - year: 2026
+      date: "2026-10-03/2026-10-09"
+      link: https://conf.researchr.org/home/issta-2026
+      deadline:
+        - "2026-01-29 23:59"
+      place: Oakland, California, USA
 
 - name: ICST
   description: International Conference on Software Testing, Verification and Validation
-  year: 2027
-  link: https://conf.researchr.org/home/icst-2027
-  deadline: ["2026-11-02 23:59"]
-  date: "Mon 17 - Fri 21 May 2027"
-  place: San Sebastian, Spain
   tags: [SE, CONF, BKIF-1]
+  editions:
+    - year: 2027
+      date: "2027-05-17/2027-05-21"
+      link: https://conf.researchr.org/home/icst-2027
+      deadline:
+        - "2026-11-02 23:59"
+      place: San Sebastian, Spain
 
 - name: SANER
   description: International Conference on Software Analysis, Evolution and Reengineering
-  year: 2027
-  link: https://conf.researchr.org/home/saner-2027
-  deadline: ["2026-09-25 23:59"]
-  date: "March 9-12"
-  place: Richmond, Virginia, USA
   tags: [SE, CONF]
-
+  editions:
+    - year: 2027
+      date: "2027-03-09/2027-03-12"
+      link: https://conf.researchr.org/home/saner-2027
+      deadline:
+        - "2026-09-25 23:59"
+      place: Richmond, Virginia, USA

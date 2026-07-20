@@ -4,15 +4,17 @@ $(function() {
   deadlineByConf = {};
 
   {% for conf in site.data.conferences %}
-  // {{ conf.name }} {{ conf.year }}
-  {% if conf.deadline[0] == "TBA" %}
-  {% assign conf_id = conf.name | append: conf.year | append: '-0' | slugify %}
+  {% for edition in conf.editions %}
+  {% if edition.deadline %}
+  // {{ conf.name }} {{ edition.year }}
+  {% if edition.deadline[0] == "TBA" %}
+  {% assign conf_id = conf.name | append: edition.year | append: '-0' | slugify %}
   $('#{{ conf_id }} .timer').html("TBA");
   $('#{{ conf_id }} .deadline-time').html("TBA");
   deadlineByConf["{{ conf_id }}"] = null;
 
   {% else %}
-  var rawDeadlines = {{ conf.deadline | jsonify }} || [];
+  var rawDeadlines = {{ edition.deadline | jsonify }} || [];
   if (rawDeadlines.constructor !== Array) {
     rawDeadlines = [rawDeadlines];
   }
@@ -20,11 +22,11 @@ $(function() {
   while (rawDeadlines.length > 0) {
     var rawDeadline = rawDeadlines.pop();
     // deal with year template in deadline
-    year = {{ conf.year }};
+    year = {{ edition.year }};
     rawDeadline = rawDeadline.replace('%y', year).replace('%Y', year - 1);
     // adjust date according to deadline timezone
-    {% if conf.timezone %}
-    var deadline = moment.tz(rawDeadline, "{{ conf.timezone }}");
+    {% if edition.timezone %}
+    var deadline = moment.tz(rawDeadline, "{{ edition.timezone }}");
     {% else %}
     var deadline = moment.tz(rawDeadline, "Etc/GMT+12"); // Anywhere on Earth
     {% endif %}
@@ -42,31 +44,90 @@ $(function() {
   // the right parsed deadline
   parsedDeadlines.reverse();
 
-  {% assign range_end = conf.deadline.size | minus: 1 %}
+  {% assign range_end = edition.deadline.size | minus: 1 %}
   {% for i in (0..range_end) %}
-  {% assign conf_id = conf.name | append: conf.year | append: '-' | append: i | slugify %}
+  {% assign conf_id = conf.name | append: edition.year | append: '-' | append: i | slugify %}
+  {% assign gcal_title = conf.name | append: " " | append: edition.year | append: " Deadline" %}
+  {% assign gcal_details = "Paper submission deadline for " | append: conf.name | append: " " | append: edition.year %}
   var deadlineId = {{ i }};
   if (deadlineId < parsedDeadlines.length) {
     var confDeadline = parsedDeadlines[deadlineId];
 
     // render countdown timer
     if (confDeadline) {
-      function make_update_countdown_fn(confDeadline) {
+      function make_update_countdown_fn(confDeadline, confId) {
         return function(event) {
-          diff = moment() - confDeadline
+          var diff = moment() - confDeadline;
+          var daysLeft = confDeadline.diff(moment(), 'days');
+          var $timer = $(this);
+          var $badge = $('#' + confId + ' .d-day-badge');
+
           if (diff <= 0) {
-             $(this).html(event.strftime('%D days %Hh %Mm %Ss'));
+             $timer.html(event.strftime('%D days %Hh %Mm %Ss'));
           } else {
-            $(this).html(confDeadline.fromNow());
+             $timer.html(confDeadline.fromNow());
+          }
+
+          if (daysLeft <= 10 && diff < 0) {
+            $timer.addClass('text-danger fw-bold');
+          } else {
+            $timer.removeClass('text-danger fw-bold');
+          }
+
+          if (diff < 0) {
+            var badgeText = daysLeft === 0 ? 'Due Today!' : (daysLeft === 1 ? '1 Day Left' : daysLeft + ' Days Left');
+            $badge.removeClass('bg-danger bg-warning bg-info bg-orange text-white text-dark');
+            if (daysLeft <= 10) {
+              $badge.text(badgeText).addClass('bg-danger text-white').show();
+            } else if (daysLeft <= 20) {
+              $badge.text(badgeText).addClass('bg-orange text-white').show();
+            } else if (daysLeft <= 30) {
+              $badge.text(badgeText).addClass('bg-warning text-dark').show();
+            } else {
+              $badge.hide();
+            }
+          } else {
+            $badge.hide();
           }
         }
       }
-      $('#{{ conf_id }} .timer').countdown(confDeadline.toDate(), make_update_countdown_fn(confDeadline));
+      $('#{{ conf_id }} .timer').countdown(confDeadline.toDate(), make_update_countdown_fn(confDeadline, '{{ conf_id }}'));
       // check if date has passed, add 'past' class to it
       if (moment() - confDeadline > 0) {
         $('#{{ conf_id }}').addClass('past');
       }
-      $('#{{ conf_id }} .deadline-time').html(confDeadline.local().format('D MMM YYYY, h:mm:ss a'));
+      var $dt = $('#{{ conf_id }} .deadline-time');
+      $dt.html(confDeadline.local().format('D MMM YYYY, h:mm:ss a'));
+      $dt.css({'cursor': 'pointer', 'text-decoration': 'underline', 'color': '#0d6efd'});
+      $dt.attr('title', 'Show in calendar');
+      $dt.data('calendar-date', confDeadline.format('YYYY-MM-DD'));
+      $dt.on('click', function() {
+        var dateStr = $(this).data('calendar-date');
+        $('html, body').animate({
+          scrollTop: $('.calendar').offset().top - 100
+        }, 500);
+        currentMonth = moment(dateStr, 'YYYY-MM-DD');
+        renderCalendar();
+        setTimeout(function() {
+          var $targetDay = $('.calendar-day[data-date="' + dateStr + '"]');
+          if ($targetDay.length) {
+            $targetDay.addClass('border border-3 border-warning');
+            setTimeout(function() {
+              $targetDay.removeClass('border border-3 border-warning');
+            }, 2000);
+          }
+        }, 100);
+      });
+      var $calBtn = $('#{{ conf_id }} .add-calendar-btn');
+      if ($calBtn.length) {
+        var gcalStart = confDeadline.clone().utc().format('YYYYMMDD[T]HHmmss[Z]');
+        var gcalEnd = confDeadline.clone().utc().add(30, 'minutes').format('YYYYMMDD[T]HHmmss[Z]');
+        var gcalTitle = encodeURIComponent({{ gcal_title | jsonify }});
+        var gcalDetails = encodeURIComponent({{ gcal_details | jsonify }});
+        var gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + gcalTitle + '&dates=' + gcalStart + '/' + gcalEnd + '&details=' + gcalDetails;
+        $calBtn.attr('href', gcalUrl).show();
+      }
+
       deadlineByConf["{{ conf_id }}"] = confDeadline;
     }
   } else {
@@ -74,6 +135,8 @@ $(function() {
   }
   {% endfor %}
   {% endif %}
+  {% endif %}
+  {% endfor %}
   {% endfor %}
 
   // Reorder list
@@ -99,7 +162,9 @@ $(function() {
     field: 'ALL',
     topconf: 'ALL',
     bkif: [],
-    conftype: 'ALL'
+    conftype: 'ALL',
+    hidePast: false,
+    search: ''
   };
 
   // Load saved state
@@ -108,6 +173,12 @@ $(function() {
     filterState = savedState;
     if (!Array.isArray(filterState.bkif)) {
       filterState.bkif = [];
+    }
+    if (typeof filterState.search !== 'string') {
+      filterState.search = '';
+    }
+    if (filterState.search) {
+      $('#conf-search').val(filterState.search);
     }
     if (filterState.field !== 'ALL') {
       $('#' + filterState.field + '-radio').prop('checked', true);
@@ -128,12 +199,24 @@ $(function() {
     } else {
       $('#TYPE-ALL-radio').prop('checked', true);
     }
+    if (filterState.hidePast) {
+      $('#HIDE-PAST-checkbox').prop('checked', true);
+    }
   }
 
   function update_conf_list() {
+    var visibleCount = 0;
     confs.each(function(i, conf) {
       var $conf = $(conf);
       var show = true;
+
+      // 0. Search filter
+      if (show && filterState.search) {
+        var searchText = $conf.attr('data-search') || '';
+        if (searchText.indexOf(filterState.search) === -1) {
+          show = false;
+        }
+      }
 
       // 1. Field filter (SEC or SE)
       if (filterState.field !== 'ALL') {
@@ -144,7 +227,6 @@ $(function() {
 
       // 2. Top Conference filter
       if (show && filterState.topconf === 'YES') {
-        // Check the TOP tag for the selected field
         if (filterState.field === 'SEC') {
           if (!$conf.hasClass('SEC-TOP')) {
             show = false;
@@ -154,7 +236,6 @@ $(function() {
             show = false;
           }
         } else {
-          // If all fields are selected, show if it has SEC-TOP or SE-TOP
           if (!$conf.hasClass('SEC-TOP') && !$conf.hasClass('SE-TOP')) {
             show = false;
           }
@@ -182,14 +263,30 @@ $(function() {
         }
       }
 
+      // 5. Hide past deadlines
+      if (show && filterState.hidePast) {
+        if ($conf.hasClass('past')) {
+          show = false;
+        }
+      }
+
       if (show) {
         $conf.show();
+        visibleCount++;
       } else {
         $conf.hide();
       }
     });
+    $('#empty-state').toggle(visibleCount === 0);
   }
   update_conf_list();
+
+  // Search input event
+  $('#conf-search').on('input', function() {
+    filterState.search = $(this).val().trim().toLowerCase();
+    store.set('{{ site.domain }}_filter_v3', filterState);
+    update_conf_list();
+  });
 
   // Field radio button event
   $('.field-radio').change(function(e) {
@@ -230,6 +327,31 @@ $(function() {
     update_conf_list();
   });
 
+  // Hide past deadlines checkbox event
+  $('.hide-past-checkbox').change(function(e) {
+    filterState.hidePast = $(this).is(':checked');
+    store.set('{{ site.domain }}_filter_v3', filterState);
+    update_conf_list();
+  });
+
+  // ========== Format Conference Dates in Cards ==========
+  $('.conf-date-display').each(function() {
+    var $el = $(this);
+    var start = moment($el.data('start'));
+    var end = moment($el.data('end'));
+    if (start.isValid() && end.isValid()) {
+      var formatted;
+      if (start.year() === end.year() && start.month() === end.month()) {
+        formatted = start.format('MMM D') + ' – ' + end.format('D, YYYY');
+      } else if (start.year() === end.year()) {
+        formatted = start.format('MMM D') + ' – ' + end.format('MMM D, YYYY');
+      } else {
+        formatted = start.format('MMM D, YYYY') + ' – ' + end.format('MMM D, YYYY');
+      }
+      $el.html('📅 ' + formatted);
+    }
+  });
+
   // ========== Calendar ==========
   var currentMonth = moment();
 
@@ -251,6 +373,35 @@ $(function() {
       });
     }
   }
+
+  // Collect all conference dates (from editions with ISO date ranges)
+  var allConferenceDates = {};
+  {% for conf in site.data.conferences %}
+  {% for edition in conf.editions %}
+  {% if edition.date and edition.date != "TBA" %}
+  (function() {
+    var dateStr = "{{ edition.date }}";
+    if (dateStr.indexOf('/') !== -1) {
+      var parts = dateStr.split('/');
+      var startDate = moment(parts[0]);
+      var endDate = moment(parts[1]);
+      var current = startDate.clone();
+      while (current.isSameOrBefore(endDate)) {
+        var dateKey = current.format('YYYY-MM-DD');
+        if (!allConferenceDates[dateKey]) {
+          allConferenceDates[dateKey] = [];
+        }
+        allConferenceDates[dateKey].push({
+          name: "{{ conf.name }} {{ edition.year }}",
+          place: "{{ edition.place }}"
+        });
+        current.add(1, 'day');
+      }
+    }
+  })();
+  {% endif %}
+  {% endfor %}
+  {% endfor %}
 
   function renderCalendar() {
     var $container = $('#calendar-days');
@@ -286,38 +437,58 @@ $(function() {
         $day.addClass('today');
       }
 
-      // Deadline highlight
+      // Build combined tooltip
+      var tooltipParts = [];
+
+      // Conference date highlight (blue)
+      if (allConferenceDates[dateStr]) {
+        $day.addClass('has-conference');
+        allConferenceDates[dateStr].forEach(function(c) {
+          tooltipParts.push('📍 ' + c.name + (c.place ? ' @ ' + c.place : ''));
+        });
+      }
+
+      // Deadline highlight (red) - takes visual priority over conference
       if (allDeadlines[dateStr]) {
         $day.addClass('has-deadline');
-        var deadlineList = allDeadlines[dateStr];
-        var tooltipText = deadlineList.map(function(dl) {
-          return dl.name + ' (' + dl.time + ')';
-        }).join('\n');
-        $day.attr('title', tooltipText);
+        allDeadlines[dateStr].forEach(function(dl) {
+          tooltipParts.push('<span class="info-link" data-target="' + dl.id + '" style="color: #8b0029; font-weight: 600; cursor: pointer; text-decoration: underline;">⏰ ' + dl.name + ' (' + dl.time + ')</span>');
+        });
+      }
 
-        // Click to scroll to conference
+      // Set combined tooltip and click handler
+      if (tooltipParts.length > 0) {
+        $day.data('tooltip', tooltipParts.join('<br>'));
         $day.css('cursor', 'pointer');
-        $day.on('click', function() {
-          var date = $(this).attr('data-date');
-          var deadlines = allDeadlines[date];
-          if (deadlines && deadlines.length > 0) {
-            var targetId = deadlines[0].id;
-            var $target = $('#' + targetId);
-            if ($target.length) {
-              $('html, body').animate({
-                scrollTop: $target.offset().top - 100
-              }, 500);
-              $target.addClass('border border-3 border-warning');
-              setTimeout(function() {
-                $target.removeClass('border border-3 border-warning');
-              }, 2000);
-            }
-          }
+
+        $day.on('mouseenter', function() {
+          $('#calendar-info-box').html($(this).data('tooltip')).css('visibility', 'visible');
+        });
+        
+        $day.on('mouseleave', function() {
+          $('#calendar-info-box').css('visibility', 'hidden');
         });
       }
 
       $container.append($day);
     }
+
+    // Delegated click event for links in the info box
+    $('#calendar-info-box').off('click', '.info-link').on('click', '.info-link', function() {
+      var targetId = $(this).data('target');
+      if (targetId) {
+        var $target = $('#' + targetId);
+        if ($target.length) {
+          $('html, body').animate({
+            scrollTop: $target.offset().top - 100
+          }, 500);
+          $target.addClass('border border-3 border-warning');
+          setTimeout(function() {
+            $target.removeClass('border border-3 border-warning');
+          }, 2000);
+        }
+      }
+    });
 
     // Next month days (fill remaining grid)
     var totalCells = $container.children().length;
