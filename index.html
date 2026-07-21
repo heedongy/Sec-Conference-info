@@ -211,6 +211,19 @@
       min-width: 0;
     }
 
+    .favorite-star {
+      cursor: pointer;
+      font-size: 1.25rem;
+      color: #e0e0e0;
+      margin-left: 8px;
+      transition: color 0.2s;
+      user-select: none;
+    }
+    .favorite-star:hover,
+    .favorite-star.active {
+      color: #ffc107;
+    }
+
     @media (max-width: 768px) {
       .calendar-day {
         width: 38px;
@@ -433,8 +446,9 @@
         <div class="card-body">
           <div class="row">
             <div class="col-lg-6">
-              <h3 class="card-title">
+              <h3 class="card-title d-flex align-items-center">
                 <a href="{{ edition.link }}" class="text-decoration-none">{{conf.name}} {{ edition.year }}</a>
+                <span class="favorite-star" data-conf-id="{{ conf_id }}" title="Toggle favorite">★</span>
               </h3>
               <div class="text-muted">
                 {{ conf.description }}<br>

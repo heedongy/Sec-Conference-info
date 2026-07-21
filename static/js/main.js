@@ -139,23 +139,71 @@ $(function() {
   {% endfor %}
   {% endfor %}
 
-  // Reorder list
-  var today = moment();
-  var confs = $('.conf').detach();
-  confs.sort(function(a, b) {
-    var aDeadline = deadlineByConf[a.id];
-    var bDeadline = deadlineByConf[b.id];
-    var aDiff = today.diff(aDeadline);
-    var bDiff = today.diff(bDeadline);
-    if (aDiff < 0 && bDiff > 0) {
-      return -1;
+  // Favorite state management
+  var favorites = [];
+  try {
+    favorites = JSON.parse(localStorage.getItem('conf_favorites')) || [];
+  } catch (e) {
+    favorites = [];
+  }
+
+  // Update UI for favorites
+  $('.favorite-star').each(function() {
+    var confId = $(this).data('conf-id');
+    if (favorites.indexOf(confId) !== -1) {
+      $(this).addClass('active');
     }
-    if (aDiff > 0 && bDiff < 0) {
-      return 1;
-    }
-    return bDiff - aDiff;
   });
-  $('.conf-container').append(confs);
+
+  $('.favorite-star').on('click', function(e) {
+    e.preventDefault();
+    var confId = $(this).data('conf-id');
+    var index = favorites.indexOf(confId);
+    
+    if (index === -1) {
+      // Allow only one favorite
+      $('.favorite-star').removeClass('active');
+      favorites = [confId];
+      $(this).addClass('active');
+    } else {
+      // Toggle off if clicking the already favorited one
+      favorites = [];
+      $(this).removeClass('active');
+    }
+    
+    localStorage.setItem('conf_favorites', JSON.stringify(favorites));
+    reorderConferences();
+    update_conf_list();
+  });
+
+  // Reorder list
+  function reorderConferences() {
+    var today = moment();
+    var sortedConfs = $('.conf').detach();
+    sortedConfs.sort(function(a, b) {
+      var aFav = favorites.indexOf(a.id) !== -1;
+      var bFav = favorites.indexOf(b.id) !== -1;
+      
+      if (aFav && !bFav) return -1;
+      if (!aFav && bFav) return 1;
+
+      var aDeadline = deadlineByConf[a.id];
+      var bDeadline = deadlineByConf[b.id];
+      var aDiff = today.diff(aDeadline);
+      var bDiff = today.diff(bDeadline);
+      
+      if (aDiff < 0 && bDiff > 0) {
+        return -1;
+      }
+      if (aDiff > 0 && bDiff < 0) {
+        return 1;
+      }
+      return bDiff - aDiff;
+    });
+    $('.conf-container').append(sortedConfs);
+  }
+
+  reorderConferences();
 
   // Filter state management
   var filterState = {
@@ -206,8 +254,16 @@ $(function() {
 
   function update_conf_list() {
     var visibleCount = 0;
-    confs.each(function(i, conf) {
+    $('.conf').each(function(i, conf) {
       var $conf = $(conf);
+      
+      // Always show favorited conference regardless of filters
+      if (favorites.indexOf(conf.id) !== -1) {
+        $conf.show();
+        visibleCount++;
+        return true;
+      }
+
       var show = true;
 
       // 0. Search filter
