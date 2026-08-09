@@ -222,6 +222,12 @@
       deadline:
         - "2026-01-29 23:59"
       place: Oakland, California, USA
+    - year: 2027
+      date: "2027-09-07/2026-09-10"
+      link: https://conf.researchr.org/home/issta-2027
+      deadline:
+        - "2027-01-11 23:59"
+      place: Singapore
 
 - name: ICST
   description: International Conference on Software Testing, Verification and Validation
