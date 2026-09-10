@@ -211,6 +211,12 @@
       deadline:
         - "2025-11-13 23:59"
       place: Boulder, Colorado, United States
+    - year: 2027
+      date: "2027-06-05/2027-06-11"
+      link: https://pldi27.sigplan.org/
+      deadline:
+        - "2026-11-12 23:59"
+      place: Atlanta, Georgia, USA
 
 - name: ISSTA
   description: International Symposium on Software Testing and Analysis
