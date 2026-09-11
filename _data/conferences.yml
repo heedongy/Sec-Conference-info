@@ -158,13 +158,13 @@
   description: The International Conference on Dependable Systems and Networks
   tags: [SEC, CONF, BKIF-2]
   editions:
-    - year: 2026
-      date: "2026-06-22/2026-06-25"
+    - year: 2027
+      date: "2027-06-22/2027-06-25"
       link: https://dsn2026.github.io/
       deadline:
-        - "2025-12-04 23:59"
-      comment: Abstract deadline on Nov 27
-      place: Charlotte, USA
+        - "2026-12-2 23:59"
+      comment: Abstract deadline on Nov 25
+      place: Berlin, Germany
 
 # ─── Software Engineering ────────────────────────────────────────────────────
 
