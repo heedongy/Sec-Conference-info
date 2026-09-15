@@ -94,6 +94,13 @@
         - "2025-11-20 23:59"
       comment: Abstract registration 13 November 2025 AoE.
       place: Lisbon, Portugal
+    - year: 2027
+      date: "2027-07-05/2027-07-09"
+      link: hhttps://eurosp2027.ieee-security.org/
+      deadline:
+        - "2026-12-02 23:59"
+      comment: Research track CFP. Registration deadline: 2026-11-25 AoE.
+      place: Madrid, Spain
 
 - name: IFIP SEC
   description: IFIP International Information Security and Privacy Conference
