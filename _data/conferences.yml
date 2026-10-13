@@ -14,7 +14,7 @@
   tags: [SEC, CONF, SEC-TOP, BKIF-4]
   editions:
     - year: 2027
-      date: "TBA"
+      date: "2027-05-17/2027-05-19"
       link: https://sp2027.ieee-security.org/
       deadline:
         - "2026-06-11 23:59"
@@ -33,6 +33,11 @@
         - "2026-04-29 23:59"
       comment: Abstract registration required (1 week before deadline AoE).
       place: The Hague, The Netherlands
+    - year: 2027
+      date: "2027-10-11/2027-10-15"
+      link: https://www.sigsac.org/ccs/CCS2027/
+      comment: Main research-paper submission deadline TBA.
+      place: Atlanta, USA
 
 - name: USENIX Security
   description: USENIX Security Symposium
@@ -45,6 +50,11 @@
         - "2026-08-25 23:59"
         - "2027-01-26 23:59"
       place: Denver, CO, USA
+    - year: 2028
+      date: "2028-08-16/2028-08-18"
+      link: https://www.usenix.org/conference/usenixsecurity28
+      comment: Main research-paper submission deadline TBA.
+      place: Seattle, WA, USA
 
 - name: NDSS
   description: ISOC Network and Distributed System Security Symposium
@@ -63,12 +73,11 @@
   tags: [SEC, CONF, BKIF-2]
   editions:
     - year: 2026
-      date: "TBA"
+      date: "2026-09-14/2026-09-16"
       link: https://sites.google.com/di.uniroma1.it/esorics2026
       deadline:
         - "2026-01-09 23:59"
         - "2026-04-21 23:59"
-      comment: September (exact dates TBA)
       place: Rome, Italy
 
 - name: ASIACCS
@@ -96,7 +105,7 @@
       place: Lisbon, Portugal
     - year: 2027
       date: "2027-07-05/2027-07-09"
-      link: hhttps://eurosp2027.ieee-security.org/
+      link: https://eurosp2027.ieee-security.org/
       deadline:
         - "2026-12-02 23:59"
       comment: Abstract registration 25 November 2026 AoE.
@@ -169,7 +178,7 @@
       date: "2027-06-22/2027-06-25"
       link: https://dsn2027-berlin.github.io/
       deadline:
-        - "2026-12-2 23:59"
+        - "2026-12-02 23:59"
       comment: Abstract deadline on Nov 25
       place: Berlin, Germany
 
