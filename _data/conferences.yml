@@ -157,7 +157,7 @@
       deadline:
         - "2026-10-16 23:59"
       timezone: America/New_York
-      comment: Regular paper deadline extended from October 2 to October 16, 2026 (EST).
+      comment: Regular paper deadline extended from October 2 to October 16 2026 EST.
       place: Gwangju, South Korea
 
 - name: ACSAC
@@ -180,7 +180,7 @@
       link: https://dsn2027-berlin.github.io/
       deadline:
         - "2026-12-02 23:59"
-      comment: "Abstract deadline: 2026-11-25 23:59 AoE. All deadlines are AoE."
+      comment: Abstract deadline on Nov 25 AoE.
       place: Berlin, Germany
 
 # ─── Software Engineering ────────────────────────────────────────────────────
@@ -216,7 +216,7 @@
       link: https://conf.researchr.org/home/fse-2027
       deadline:
         - "2026-10-03 23:59"
-      comment: Main Research Track deadline extended by one day due to a system-wide HotCRP outage; deadline AoE.
+      comment: Main Research Track deadline extended by one day after system wide HotCRP outage Deadline AoE.
       place: Shenzhen, China
 
 - name: PLDI
