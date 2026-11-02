@@ -181,24 +181,22 @@ $(function() {
     var today = moment();
     var sortedConfs = $('.conf').detach();
     sortedConfs.sort(function(a, b) {
+      var aDeadline = deadlineByConf[a.id];
+      var bDeadline = deadlineByConf[b.id];
+      var aGroup = !aDeadline ? 1 : (aDeadline.isAfter(today) ? 0 : 2);
+      var bGroup = !bDeadline ? 1 : (bDeadline.isAfter(today) ? 0 : 2);
+      if (aGroup !== bGroup) return aGroup - bGroup;
+
       var aFav = favorites.indexOf(a.id) !== -1;
       var bFav = favorites.indexOf(b.id) !== -1;
       
       if (aFav && !bFav) return -1;
       if (!aFav && bFav) return 1;
 
-      var aDeadline = deadlineByConf[a.id];
-      var bDeadline = deadlineByConf[b.id];
-      var aDiff = today.diff(aDeadline);
-      var bDiff = today.diff(bDeadline);
-      
-      if (aDiff < 0 && bDiff > 0) {
-        return -1;
+      if (!aDeadline && !bDeadline) {
+        return $(a).attr('data-search').localeCompare($(b).attr('data-search'));
       }
-      if (aDiff > 0 && bDiff < 0) {
-        return 1;
-      }
-      return bDiff - aDiff;
+      return aDeadline.valueOf() - bDeadline.valueOf();
     });
     $('.conf-container').append(sortedConfs);
   }
@@ -211,6 +209,7 @@ $(function() {
     topconf: 'ALL',
     bkif: [],
     conftype: 'ALL',
+    hideTba: false,
     hidePast: false,
     search: ''
   };
@@ -250,12 +249,19 @@ $(function() {
     if (filterState.hidePast) {
       $('#HIDE-PAST-checkbox').prop('checked', true);
     }
+    if (filterState.hideTba) {
+      $('#HIDE-TBA-checkbox').prop('checked', true);
+    }
   }
 
   function update_conf_list() {
     var visibleCount = 0;
     $('.conf').each(function(i, conf) {
       var $conf = $(conf);
+      if (filterState.hideTba && $conf.hasClass('tba')) {
+        $conf.hide();
+        return true;
+      }
       
       // Always show favorited conference regardless of filters
       if (favorites.indexOf(conf.id) !== -1) {
@@ -379,6 +385,13 @@ $(function() {
   // Type radio button event
   $('.type-radio').change(function(e) {
     filterState.conftype = $(this).val();
+    store.set('{{ site.domain }}_filter_v3', filterState);
+    update_conf_list();
+  });
+
+  // Hide TBA conference checkbox event
+  $('.hide-tba-checkbox').change(function() {
+    filterState.hideTba = $(this).is(':checked');
     store.set('{{ site.domain }}_filter_v3', filterState);
     update_conf_list();
   });

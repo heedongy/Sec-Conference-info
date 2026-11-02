@@ -157,6 +157,11 @@ h1.display-5 {
   background: white;
 }
 
+.conf.tba {
+  background: #fffaf4;
+  border-color: #f5e9da;
+}
+
 .conf .card-title {
   font-size: 1.5rem;
   margin-bottom: 0.5rem;

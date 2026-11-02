@@ -407,6 +407,11 @@
                   <div class="filter-label">Status</div>
                   <div class="d-flex gap-2 flex-wrap">
                     <div class="form-check">
+                      <input class="form-check-input hide-tba-checkbox" type="checkbox" id="HIDE-TBA-checkbox"
+                        value="YES">
+                      <label class="form-check-label" for="HIDE-TBA-checkbox">Hide TBA conference</label>
+                    </div>
+                    <div class="form-check">
                       <input class="form-check-input hide-past-checkbox" type="checkbox" id="HIDE-PAST-checkbox"
                         value="YES">
                       <label class="form-check-label" for="HIDE-PAST-checkbox">Hide past deadlines</label>
@@ -436,7 +441,7 @@
       {% assign deadline = edition.deadline[i] | replace: '%y', year | replace: '%Y', prevyear %}
       {% assign conf_id = conf.name | append: edition.year | append: '-' | append: i | slugify %}
       <div id="{{ conf_id }}"
-        class="conf card shadow-sm mb-4 position-relative {% for tag in conf.tags %} {{tag}} {% endfor %}"
+        class="conf card shadow-sm mb-4 position-relative {% if deadline == 'TBA' %}tba {% endif %}{% for tag in conf.tags %} {{tag}} {% endfor %}"
         data-search="{{ conf.name | append: ' ' | append: edition.year | downcase }}">
         <!-- D-Day Badge -->
         <div class="position-absolute" style="top: -10px; right: 20px; z-index: 10;">
