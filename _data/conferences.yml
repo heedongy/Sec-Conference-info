@@ -36,6 +36,8 @@
     - year: 2027
       date: "2027-10-11/2027-10-15"
       link: https://www.sigsac.org/ccs/CCS2027/
+      deadline:
+        - TBA
       comment: Main research-paper submission deadline TBA.
       place: Atlanta, USA
 
@@ -147,7 +149,6 @@
       place: Dublin, Ireland
     - year: 2028
       date: TBA
-      link: https://thewebconf.org/
       deadline:
         - TBA
       place: Edmonton, Canada
@@ -222,7 +223,6 @@
       place: Dublin, Ireland
     - year: 2028
       date: TBA
-      link: https://www.icse-conferences.org/
       deadline:
         - TBA
       comment: Scheduled for April 2028.
@@ -252,7 +252,6 @@
       place: Shenzhen, China
     - year: 2028
       date: TBA
-      link: https://www.esec-fse.org/upcoming_events
       deadline:
         - TBA
       place: Milan, Italy
@@ -292,7 +291,6 @@
       place: Singapore
     - year: 2028
       date: TBA
-      link: https://www.issta.org/
       deadline:
         - TBA
       place: Shanghai, China
