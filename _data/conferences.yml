@@ -122,7 +122,7 @@
   tags: [CONF, BKIF-4]
   editions:
     - year: 2027
-      date: "2027-05-12/2027-05-14"
+      date: "2027-05-10/2027-05-14"
       link: https://www2027.thewebconf.org/
       deadline:
         - "2026-10-25 23:59"
@@ -140,7 +140,7 @@
   tags: [SEC, CONF, BKIF-2]
   editions:
     - year: 2027
-      date: "2027-04-20/2027-04-23"
+      date: "2027-04-19/2027-04-23"
       link: https://2027.eurosys.org
       deadline:
         - "2026-05-14 23:59"
