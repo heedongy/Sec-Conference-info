@@ -74,13 +74,6 @@
   description: European Symposium on Research in Computer Security
   tags: [SEC, CONF, BKIF-2]
   editions:
-    - year: 2026
-      date: "2026-09-14/2026-09-16"
-      link: https://sites.google.com/di.uniroma1.it/esorics2026
-      deadline:
-        - "2026-01-09 23:59"
-        - "2026-04-21 23:59"
-      place: Rome, Italy
     - year: 2027
       date: "2027-09-13/2027-09-15"
       link: https://www.esorics2027.org/home
@@ -104,13 +97,6 @@
   description: IEEE European Symposium on Security and Privacy
   tags: [SEC, CONF]
   editions:
-    - year: 2026
-      date: "2026-07-06/2026-07-10"
-      link: https://eurosp2026.ieee-security.org/
-      deadline:
-        - "2025-11-20 23:59"
-      comment: Abstract registration 13 November 2025 AoE.
-      place: Lisbon, Portugal
     - year: 2027
       date: "2027-07-05/2027-07-09"
       link: https://eurosp2027.ieee-security.org/
@@ -123,15 +109,9 @@
   description: IFIP International Information Security and Privacy Conference
   tags: [SEC, CONF, BKIF-1]
   editions:
-    - year: 2026
-      date: "2026-06-09/2026-06-11"
-      link: https://ifipsec.org
-      deadline:
-        - "2025-12-19 23:59"
-      place: Perth, Australia
     - year: 2027
       date: "2027-06-14/2027-06-16"
-      link: https://ifipsec.org/
+      link: https://ifipsec.org/cfp.html
       deadline:
         - "2026-12-15 23:59"
       comment: Submission deadline is December 15 2026 AoE.
@@ -142,8 +122,8 @@
   tags: [CONF, BKIF-4]
   editions:
     - year: 2027
-      date: "2027-05-10/2027-05-14"
-      link: https://acmweb2027.org/
+      date: "2027-05-12/2027-05-14"
+      link: https://www2027.thewebconf.org/
       deadline:
         - "2026-10-25 23:59"
       place: Dublin, Ireland
@@ -160,7 +140,7 @@
   tags: [SEC, CONF, BKIF-2]
   editions:
     - year: 2027
-      date: "2027-04-19/2027-04-23"
+      date: "2027-04-20/2027-04-23"
       link: https://2027.eurosys.org
       deadline:
         - "2026-05-14 23:59"
@@ -231,13 +211,7 @@
 - name: ASE
   description: International Conference on Automated Software Engineering
   tags: [SE, CONF, SE-TOP, BKIF-3]
-  editions:
-    - year: 2026
-      date: "2026-10-12/2026-10-16"
-      link: https://conf.researchr.org/home/ase-2026
-      deadline:
-        - "2026-03-26 23:59"
-      place: Munich, Germany
+  editions: []
 
 - name: FSE
   description: Foundations of Software Engineering
@@ -260,12 +234,6 @@
   description: Programming Language Design and Implementation
   tags: [SE, CONF, SE-TOP, BKIF-4]
   editions:
-    - year: 2026
-      date: "2026-06-15/2026-06-19"
-      link: https://pldi26.sigplan.org/
-      deadline:
-        - "2025-11-13 23:59"
-      place: Boulder, Colorado, United States
     - year: 2027
       date: "2027-06-05/2027-06-11"
       link: https://pldi27.sigplan.org/
@@ -277,12 +245,6 @@
   description: International Symposium on Software Testing and Analysis
   tags: [SE, CONF, BKIF-2]
   editions:
-    - year: 2026
-      date: "2026-10-03/2026-10-09"
-      link: https://conf.researchr.org/home/issta-2026
-      deadline:
-        - "2026-01-29 23:59"
-      place: Oakland, California, USA
     - year: 2027
       date: "2027-09-07/2027-09-10"
       link: https://conf.researchr.org/home/issta-2027
