@@ -1,574 +1,468 @@
 ---
 ---
 $(function() {
-  deadlineByConf = {};
+  var FILTER_KEY = '{{ site.domain }}_filter_v3';
+  var FAVORITES_KEY = 'conf_favorites';
+  var FLASH_CLASSES = 'border border-3 border-warning'; // Bootstrap utilities, used to flash a target
+  var SCROLL_OFFSET = 100;
 
-  {% for conf in site.data.conferences %}
-  {% for edition in conf.editions %}
-  {% if edition.deadline %}
-  // {{ conf.name }} {{ edition.year }}
-  {% if edition.deadline[0] == "TBA" %}
-  {% assign conf_id = conf.name | append: edition.year | append: '-0' | slugify %}
-  $('#{{ conf_id }} .timer').html("TBA");
-  $('#{{ conf_id }} .deadline-time').html("TBA");
-  deadlineByConf["{{ conf_id }}"] = null;
+  // ========== Data from Jekyll (_data/conferences.yml) ==========
 
-  {% else %}
-  var rawDeadlines = {{ edition.deadline | jsonify }} || [];
-  if (rawDeadlines.constructor !== Array) {
-    rawDeadlines = [rawDeadlines];
+  // One entry per edition that lists deadlines; ids are the card ids, one per deadline.
+  var EDITIONS = [
+    {% for conf in site.data.conferences %}{% for edition in conf.editions %}{% if edition.deadline %}
+    {% assign range_end = edition.deadline.size | minus: 1 %}
+    {
+      name: {{ conf.name | jsonify }},
+      year: {{ edition.year }},
+      timezone: {{ edition.timezone | jsonify }},
+      deadlines: {{ edition.deadline | jsonify }},
+      ids: [{% for i in (0..range_end) %}{{ conf.name | append: edition.year | append: '-' | append: i | slugify | jsonify }}{% unless forloop.last %}, {% endunless %}{% endfor %}]
+    },
+    {% endif %}{% endfor %}{% endfor %}
+  ];
+
+  // Editions with a known date range ("YYYY-MM-DD/YYYY-MM-DD"), for the calendar.
+  var CONFERENCE_DATES = [
+    {% for conf in site.data.conferences %}{% for edition in conf.editions %}{% if edition.date and edition.date != "TBA" %}
+    { name: {{ conf.name | append: " " | append: edition.year | jsonify }}, place: {{ edition.place | jsonify }}, date: {{ edition.date | jsonify }} },
+    {% endif %}{% endfor %}{% endfor %}
+  ];
+
+  // ========== State ==========
+
+  var deadlineByConf = {}; // card id -> deadline (moment in local time), null while TBA
+  var allDeadlines = {};   // 'YYYY-MM-DD' -> [{id, name, time}]
+  var allConferenceDates = {}; // 'YYYY-MM-DD' -> [{name, place}]
+  var currentMonth = moment();
+  var favorites = loadFavorites();
+  var hasSavedFilters = !!store.get(FILTER_KEY);
+  var filterState = loadFilters();
+
+  // ========== Helpers ==========
+
+  function pad2(n) {
+    return (n < 10 ? '0' : '') + n;
   }
-  var parsedDeadlines = [];
-  while (rawDeadlines.length > 0) {
-    var rawDeadline = rawDeadlines.pop();
-    // deal with year template in deadline
-    year = {{ edition.year }};
-    rawDeadline = rawDeadline.replace('%y', year).replace('%Y', year - 1);
-    // adjust date according to deadline timezone
-    {% if edition.timezone %}
-    var deadline = moment.tz(rawDeadline, "{{ edition.timezone }}");
-    {% else %}
-    var deadline = moment.tz(rawDeadline, "Etc/GMT+12"); // Anywhere on Earth
-    {% endif %}
 
-    // post-process date
+  function escapeHtml(text) {
+    return $('<div>').text(text == null ? '' : text).html();
+  }
+
+  function flash($el) {
+    $el.addClass(FLASH_CLASSES);
+    setTimeout(function() { $el.removeClass(FLASH_CLASSES); }, 2000);
+  }
+
+  function scrollToElement($el) {
+    $('html, body').animate({ scrollTop: $el.offset().top - SCROLL_OFFSET }, 500);
+  }
+
+  // ========== Deadlines: countdown, calendar link, card state ==========
+
+  function countdownPart(modifier, number, unit) {
+    return '<span class="cd-part' + modifier + '"><b>' + number + '</b><i>' + unit + '</i></span>';
+  }
+
+  function countdownHtml(offset) {
+    return countdownPart(' cd-part--days', offset.totalDays, offset.totalDays === 1 ? 'day' : 'days') +
+      countdownPart('', pad2(offset.hours), 'h') +
+      countdownPart('', pad2(offset.minutes), 'm') +
+      countdownPart('', pad2(offset.seconds), 's');
+  }
+
+  // Badge colour step by days left: 10 or fewer, 20 or fewer, 30 or fewer
+  function urgencyOf(daysLeft) {
+    if (daysLeft <= 10) return 'now';
+    if (daysLeft <= 20) return 'soon';
+    if (daysLeft <= 30) return 'later';
+    return null;
+  }
+
+  function daysLeftLabel(daysLeft) {
+    if (daysLeft === 0) return 'Due Today!';
+    return daysLeft === 1 ? '1 Day Left' : daysLeft + ' Days Left';
+  }
+
+  // Deadlines without a timezone are Anywhere on Earth. "%y" / "%Y" stand for the edition year / the year before.
+  function parseDeadline(text, year, timezone) {
+    var deadline = moment.tz(text.replace('%y', year).replace('%Y', year - 1), timezone || 'Etc/GMT+12');
     if (deadline.minutes() === 0) {
-      deadline.subtract(1, 'seconds');
+      deadline.subtract(1, 'seconds'); // midnight counts as the end of the previous day
     }
     if (deadline.minutes() === 59) {
       deadline.seconds(59);
     }
-    parsedDeadlines.push(deadline);
+    return deadline;
   }
-  // due to pop before; we need to reverse such that the i index later matches
-  // the right parsed deadline
-  parsedDeadlines.reverse();
 
-  {% assign range_end = edition.deadline.size | minus: 1 %}
-  {% for i in (0..range_end) %}
-  {% assign conf_id = conf.name | append: edition.year | append: '-' | append: i | slugify %}
-  {% assign gcal_title = conf.name | append: " " | append: edition.year | append: " Deadline" %}
-  {% assign gcal_details = "Paper submission deadline for " | append: conf.name | append: " " | append: edition.year %}
-  var deadlineId = {{ i }};
-  if (deadlineId < parsedDeadlines.length) {
-    var confDeadline = parsedDeadlines[deadlineId];
+  function googleCalendarUrl(deadline, title, details) {
+    var format = 'YYYYMMDD[T]HHmmss[Z]';
+    var start = deadline.clone().utc().format(format);
+    var end = deadline.clone().utc().add(30, 'minutes').format(format);
+    return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(title) +
+      '&dates=' + start + '/' + end + '&details=' + encodeURIComponent(details);
+  }
 
-    // render countdown timer
-    if (confDeadline) {
-      function make_update_countdown_fn(confDeadline, confId) {
-        return function(event) {
-          var diff = moment() - confDeadline;
-          var daysLeft = confDeadline.diff(moment(), 'days');
-          var $timer = $(this);
-          var $badge = $('#' + confId + ' .d-day-badge');
+  function markTba(cardId) {
+    $('#' + cardId).find('.timer, .deadline-time').text('-');
+    deadlineByConf[cardId] = null;
+  }
 
-          if (diff <= 0) {
-             $timer.html(event.strftime('%D days %Hh %Mm %Ss'));
-          } else {
-             $timer.html(confDeadline.fromNow());
-          }
+  function setupDeadline(cardId, deadline, edition) {
+    var $card = $('#' + cardId);
+    var $timer = $card.find('.timer');
+    var $badge = $card.find('.d-day-badge');
 
-          if (daysLeft <= 10 && diff < 0) {
-            $timer.addClass('text-danger fw-bold');
-          } else {
-            $timer.removeClass('text-danger fw-bold');
-          }
+    $timer.countdown(deadline.toDate(), function(event) {
+      var now = moment();
+      var diff = now - deadline;
+      var daysLeft = deadline.diff(now, 'days');
 
-          if (diff < 0) {
-            var badgeText = daysLeft === 0 ? 'Due Today!' : (daysLeft === 1 ? '1 Day Left' : daysLeft + ' Days Left');
-            $badge.removeClass('bg-danger bg-warning bg-info bg-orange text-white text-dark');
-            if (daysLeft <= 10) {
-              $badge.text(badgeText).addClass('bg-danger text-white').show();
-            } else if (daysLeft <= 20) {
-              $badge.text(badgeText).addClass('bg-orange text-white').show();
-            } else if (daysLeft <= 30) {
-              $badge.text(badgeText).addClass('bg-warning text-dark').show();
-            } else {
-              $badge.hide();
-            }
-          } else {
-            $badge.hide();
-          }
-        }
+      $timer.html(diff <= 0 ? countdownHtml(event.offset) : deadline.fromNow());
+      $timer.toggleClass('is-urgent', daysLeft <= 10 && diff < 0);
+
+      var urgency = diff < 0 ? urgencyOf(daysLeft) : null;
+      if (urgency) {
+        $badge.text(daysLeftLabel(daysLeft)).attr('data-urgency', urgency).show();
+      } else {
+        $badge.hide();
       }
-      $('#{{ conf_id }} .timer').countdown(confDeadline.toDate(), make_update_countdown_fn(confDeadline, '{{ conf_id }}'));
-      // check if date has passed, add 'past' class to it
-      if (moment() - confDeadline > 0) {
-        $('#{{ conf_id }}').addClass('past');
-      }
-      var $dt = $('#{{ conf_id }} .deadline-time');
-      $dt.html(confDeadline.local().format('D MMM YYYY, h:mm:ss a'));
-      $dt.css({'cursor': 'pointer', 'text-decoration': 'underline', 'color': '#0d6efd'});
-      $dt.attr('title', 'Show in calendar');
-      $dt.data('calendar-date', confDeadline.format('YYYY-MM-DD'));
-      $dt.on('click', function() {
-        var dateStr = $(this).data('calendar-date');
-        $('html, body').animate({
-          scrollTop: $('.calendar').offset().top - 100
-        }, 500);
-        currentMonth = moment(dateStr, 'YYYY-MM-DD');
+    });
+
+    if (moment() - deadline > 0) {
+      $card.addClass('past');
+    }
+
+    // From here on the deadline is shown, stored and put on the calendar in the visitor's local time
+    deadline.local();
+    var calendarDate = deadline.format('YYYY-MM-DD');
+
+    $card.find('.deadline-time')
+      .text(deadline.format('D MMM YYYY, h:mm:ss a'))
+      .addClass('is-link')
+      .attr('title', 'Show in calendar')
+      .on('click', function() {
+        scrollToElement($('.calendar'));
+        currentMonth = moment(calendarDate, 'YYYY-MM-DD');
         renderCalendar();
         setTimeout(function() {
-          var $targetDay = $('.calendar-day[data-date="' + dateStr + '"]');
-          if ($targetDay.length) {
-            $targetDay.addClass('border border-3 border-warning');
-            setTimeout(function() {
-              $targetDay.removeClass('border border-3 border-warning');
-            }, 2000);
-          }
+          flash($('.calendar-day[data-date="' + calendarDate + '"]'));
         }, 100);
       });
-      var $calBtn = $('#{{ conf_id }} .add-calendar-btn');
-      if ($calBtn.length) {
-        var gcalStart = confDeadline.clone().utc().format('YYYYMMDD[T]HHmmss[Z]');
-        var gcalEnd = confDeadline.clone().utc().add(30, 'minutes').format('YYYYMMDD[T]HHmmss[Z]');
-        var gcalTitle = encodeURIComponent({{ gcal_title | jsonify }});
-        var gcalDetails = encodeURIComponent({{ gcal_details | jsonify }});
-        var gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + gcalTitle + '&dates=' + gcalStart + '/' + gcalEnd + '&details=' + gcalDetails;
-        $calBtn.attr('href', gcalUrl).show();
-      }
 
-      deadlineByConf["{{ conf_id }}"] = confDeadline;
-    }
-  } else {
-    // TODO: hide the conf_id ?
-  }
-  {% endfor %}
-  {% endif %}
-  {% endif %}
-  {% endfor %}
-  {% endfor %}
+    $card.find('.add-calendar-btn').attr('href', googleCalendarUrl(
+      deadline,
+      edition.name + ' ' + edition.year + ' Deadline',
+      'Paper submission deadline for ' + edition.name + ' ' + edition.year
+    )).show();
 
-  // Favorite state management
-  var favorites = [];
-  try {
-    favorites = JSON.parse(localStorage.getItem('conf_favorites')) || [];
-  } catch (e) {
-    favorites = [];
+    deadlineByConf[cardId] = deadline;
   }
 
-  // Update UI for favorites
-  $('.favorite-star').each(function() {
-    var confId = $(this).data('conf-id');
-    if (favorites.indexOf(confId) !== -1) {
-      $(this).addClass('active');
+  EDITIONS.forEach(function(edition) {
+    var rawDeadlines = [].concat(edition.deadlines);
+    if (rawDeadlines[0] === 'TBA') {
+      markTba(edition.ids[0]);
+      return;
     }
+    rawDeadlines.forEach(function(text, i) {
+      setupDeadline(edition.ids[i], parseDeadline(text, edition.year, edition.timezone), edition);
+    });
   });
 
+  // ========== Favorites and ordering ==========
+
+  function loadFavorites() {
+    try {
+      return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function isFavorite(cardId) {
+    return favorites.indexOf(cardId) !== -1;
+  }
+
+  $('.favorite-star').each(function() {
+    $(this).toggleClass('active', isFavorite($(this).data('conf-id')));
+  });
+
+  // Only one favorite at a time; clicking it again clears it
   $('.favorite-star').on('click', function(e) {
     e.preventDefault();
-    var confId = $(this).data('conf-id');
-    var index = favorites.indexOf(confId);
-    
-    if (index === -1) {
-      // Allow only one favorite
-      $('.favorite-star').removeClass('active');
-      favorites = [confId];
+    var cardId = $(this).data('conf-id');
+    var wasFavorite = isFavorite(cardId);
+
+    $('.favorite-star').removeClass('active');
+    favorites = wasFavorite ? [] : [cardId];
+    if (!wasFavorite) {
       $(this).addClass('active');
-    } else {
-      // Toggle off if clicking the already favorited one
-      favorites = [];
-      $(this).removeClass('active');
     }
-    
-    localStorage.setItem('conf_favorites', JSON.stringify(favorites));
+
+    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
     reorderConferences();
-    update_conf_list();
+    updateConferenceList();
   });
 
-  // Reorder list
+  // Order: upcoming deadlines first, then TBA, then past; the favorite leads its group
   function reorderConferences() {
-    var today = moment();
-    var sortedConfs = $('.conf').detach();
-    sortedConfs.sort(function(a, b) {
+    var now = moment();
+    function group(deadline) {
+      return !deadline ? 1 : (deadline.isAfter(now) ? 0 : 2);
+    }
+
+    var cards = $('.conf').detach();
+    cards.sort(function(a, b) {
       var aDeadline = deadlineByConf[a.id];
       var bDeadline = deadlineByConf[b.id];
-      var aGroup = !aDeadline ? 1 : (aDeadline.isAfter(today) ? 0 : 2);
-      var bGroup = !bDeadline ? 1 : (bDeadline.isAfter(today) ? 0 : 2);
-      if (aGroup !== bGroup) return aGroup - bGroup;
+      if (group(aDeadline) !== group(bDeadline)) return group(aDeadline) - group(bDeadline);
 
-      var aFav = favorites.indexOf(a.id) !== -1;
-      var bFav = favorites.indexOf(b.id) !== -1;
-      
-      if (aFav && !bFav) return -1;
-      if (!aFav && bFav) return 1;
+      if (isFavorite(a.id) !== isFavorite(b.id)) return isFavorite(a.id) ? -1 : 1;
 
       if (!aDeadline && !bDeadline) {
         return $(a).attr('data-search').localeCompare($(b).attr('data-search'));
       }
       return aDeadline.valueOf() - bDeadline.valueOf();
     });
-    $('.conf-container').append(sortedConfs);
+    $('.conf-container').append(cards);
   }
 
   reorderConferences();
 
-  // Filter state management
-  var filterState = {
-    field: 'ALL',
-    topconf: 'ALL',
-    bkif: [],
-    conftype: 'ALL',
-    hideTba: false,
-    hidePast: false,
-    search: ''
-  };
+  // ========== Filters ==========
 
-  // Load saved state
-  var savedState = store.get('{{ site.domain }}_filter_v3');
-  if (savedState) {
-    filterState = savedState;
-    if (!Array.isArray(filterState.bkif)) {
-      filterState.bkif = [];
-    }
-    if (typeof filterState.search !== 'string') {
-      filterState.search = '';
-    }
-    if (filterState.search) {
-      $('#conf-search').val(filterState.search);
-    }
-    if (filterState.field !== 'ALL') {
-      $('#' + filterState.field + '-radio').prop('checked', true);
-    } else {
-      $('#ALL-radio').prop('checked', true);
-    }
-    if (filterState.topconf === 'YES') {
-      $('#TOP-YES-radio').prop('checked', true);
-    } else {
-      $('#TOP-ALL-radio').prop('checked', true);
-    }
-    // Restore BK21-IF checkbox state
+  function loadFilters() {
+    var state = {
+      field: 'ALL',
+      topconf: 'ALL',
+      bkif: [],
+      conftype: 'ALL',
+      hideTba: false,
+      hidePast: false,
+      search: ''
+    };
+    var saved = store.get(FILTER_KEY);
+    if (!saved) return state;
+
+    state = saved;
+    if (!Array.isArray(state.bkif)) state.bkif = [];
+    if (typeof state.search !== 'string') state.search = '';
+    return state;
+  }
+
+  function saveFilters() {
+    store.set(FILTER_KEY, filterState);
+  }
+
+  function setFilter(key, value) {
+    filterState[key] = value;
+    saveFilters();
+    updateConferenceList();
+  }
+
+  function restoreFilterControls() {
+    $('#conf-search').val(filterState.search);
+    $('#' + filterState.field + '-radio').prop('checked', true);
+    $('#TOP-' + (filterState.topconf === 'YES' ? 'YES' : 'ALL') + '-radio').prop('checked', true);
+    $('#' + (filterState.conftype === 'ALL' ? 'TYPE-ALL' : filterState.conftype) + '-radio').prop('checked', true);
     filterState.bkif.forEach(function(bk) {
       $('#' + bk + '-checkbox').prop('checked', true);
     });
-    if (filterState.conftype !== 'ALL') {
-      $('#' + filterState.conftype + '-radio').prop('checked', true);
-    } else {
-      $('#TYPE-ALL-radio').prop('checked', true);
-    }
-    if (filterState.hidePast) {
-      $('#HIDE-PAST-checkbox').prop('checked', true);
-    }
-    if (filterState.hideTba) {
-      $('#HIDE-TBA-checkbox').prop('checked', true);
-    }
+    $('#HIDE-PAST-checkbox').prop('checked', !!filterState.hidePast);
+    $('#HIDE-TBA-checkbox').prop('checked', !!filterState.hideTba);
   }
 
-  function update_conf_list() {
+  // A card shows when every active filter matches; favorites ignore all filters except "hide TBA"
+  function matchesFilters($card) {
+    if (filterState.search && ($card.attr('data-search') || '').indexOf(filterState.search) === -1) return false;
+
+    if (filterState.field !== 'ALL' && !$card.hasClass(filterState.field)) return false;
+
+    if (filterState.topconf === 'YES') {
+      var topClass = filterState.field === 'ALL' ? null : filterState.field + '-TOP';
+      var isTop = topClass ? $card.hasClass(topClass) : ($card.hasClass('SEC-TOP') || $card.hasClass('SE-TOP'));
+      if (!isTop) return false;
+    }
+
+    if (filterState.bkif.length > 0) {
+      var hasBkif = filterState.bkif.some(function(level) { return $card.hasClass(level); });
+      if (!hasBkif) return false;
+    }
+
+    if (filterState.conftype !== 'ALL' && !$card.hasClass(filterState.conftype)) return false;
+
+    if (filterState.hidePast && $card.hasClass('past')) return false;
+
+    return true;
+  }
+
+  function updateConferenceList() {
     var visibleCount = 0;
-    $('.conf').each(function(i, conf) {
-      var $conf = $(conf);
-      if (filterState.hideTba && $conf.hasClass('tba')) {
-        $conf.hide();
-        return true;
-      }
-      
-      // Always show favorited conference regardless of filters
-      if (favorites.indexOf(conf.id) !== -1) {
-        $conf.show();
-        visibleCount++;
-        return true;
-      }
-
-      var show = true;
-
-      // 0. Search filter
-      if (show && filterState.search) {
-        var searchText = $conf.attr('data-search') || '';
-        if (searchText.indexOf(filterState.search) === -1) {
-          show = false;
-        }
-      }
-
-      // 1. Field filter (SEC or SE)
-      if (filterState.field !== 'ALL') {
-        if (!$conf.hasClass(filterState.field)) {
-          show = false;
-        }
-      }
-
-      // 2. Top Conference filter
-      if (show && filterState.topconf === 'YES') {
-        if (filterState.field === 'SEC') {
-          if (!$conf.hasClass('SEC-TOP')) {
-            show = false;
-          }
-        } else if (filterState.field === 'SE') {
-          if (!$conf.hasClass('SE-TOP')) {
-            show = false;
-          }
-        } else {
-          if (!$conf.hasClass('SEC-TOP') && !$conf.hasClass('SE-TOP')) {
-            show = false;
-          }
-        }
-      }
-
-      // 3. BK21-IF filter (show if matches any selected)
-      if (show && filterState.bkif.length > 0) {
-        var hasBkif = false;
-        for (var j = 0; j < filterState.bkif.length; j++) {
-          if ($conf.hasClass(filterState.bkif[j])) {
-            hasBkif = true;
-            break;
-          }
-        }
-        if (!hasBkif) {
-          show = false;
-        }
-      }
-
-      // 4. Type filter (CONF or SHOP)
-      if (show && filterState.conftype !== 'ALL') {
-        if (!$conf.hasClass(filterState.conftype)) {
-          show = false;
-        }
-      }
-
-      // 5. Hide past deadlines
-      if (show && filterState.hidePast) {
-        if ($conf.hasClass('past')) {
-          show = false;
-        }
-      }
-
-      if (show) {
-        $conf.show();
-        visibleCount++;
+    $('.conf').each(function() {
+      var $card = $(this);
+      var show;
+      if (filterState.hideTba && $card.hasClass('tba')) {
+        show = false;
       } else {
-        $conf.hide();
+        show = isFavorite(this.id) || matchesFilters($card);
       }
+      $card.toggle(show);
+      if (show) visibleCount++;
     });
     $('#empty-state').toggle(visibleCount === 0);
   }
-  update_conf_list();
 
-  // Search input event
-  $('#conf-search').on('input', function() {
-    filterState.search = $(this).val().trim().toLowerCase();
-    store.set('{{ site.domain }}_filter_v3', filterState);
-    update_conf_list();
+  if (hasSavedFilters) {
+    restoreFilterControls();
+  }
+  updateConferenceList();
+
+  $('#conf-search').on('input', function() { setFilter('search', $(this).val().trim().toLowerCase()); });
+  $('.field-radio').change(function() { setFilter('field', $(this).val()); });
+  $('.top-radio').change(function() { setFilter('topconf', $(this).val()); });
+  $('.type-radio').change(function() { setFilter('conftype', $(this).val()); });
+  $('.hide-tba-checkbox').change(function() { setFilter('hideTba', $(this).is(':checked')); });
+  $('.hide-past-checkbox').change(function() { setFilter('hidePast', $(this).is(':checked')); });
+  $('.bkif-checkbox').change(function() {
+    setFilter('bkif', $('.bkif-checkbox:checked').map(function() { return this.value; }).get());
   });
 
-  // Field radio button event
-  $('.field-radio').change(function(e) {
-    filterState.field = $(this).val();
-    store.set('{{ site.domain }}_filter_v3', filterState);
-    update_conf_list();
-  });
+  // ========== Card dates ==========
 
-  // Top Conference radio button event
-  $('.top-radio').change(function(e) {
-    filterState.topconf = $(this).val();
-    store.set('{{ site.domain }}_filter_v3', filterState);
-    update_conf_list();
-  });
-
-  // BK21-IF checkbox event
-  $('.bkif-checkbox').change(function(e) {
-    var val = $(this).val();
-    var checked = $(this).is(':checked');
-    if (checked) {
-      if (filterState.bkif.indexOf(val) === -1) {
-        filterState.bkif.push(val);
-      }
-    } else {
-      var idx = filterState.bkif.indexOf(val);
-      if (idx !== -1) {
-        filterState.bkif.splice(idx, 1);
-      }
+  function formatDateRange(start, end) {
+    if (start.year() === end.year() && start.month() === end.month()) {
+      return start.format('MMM D') + ' – ' + end.format('D, YYYY');
     }
-    store.set('{{ site.domain }}_filter_v3', filterState);
-    update_conf_list();
-  });
+    if (start.year() === end.year()) {
+      return start.format('MMM D') + ' – ' + end.format('MMM D, YYYY');
+    }
+    return start.format('MMM D, YYYY') + ' – ' + end.format('MMM D, YYYY');
+  }
 
-  // Type radio button event
-  $('.type-radio').change(function(e) {
-    filterState.conftype = $(this).val();
-    store.set('{{ site.domain }}_filter_v3', filterState);
-    update_conf_list();
-  });
-
-  // Hide TBA conference checkbox event
-  $('.hide-tba-checkbox').change(function() {
-    filterState.hideTba = $(this).is(':checked');
-    store.set('{{ site.domain }}_filter_v3', filterState);
-    update_conf_list();
-  });
-
-  // Hide past deadlines checkbox event
-  $('.hide-past-checkbox').change(function(e) {
-    filterState.hidePast = $(this).is(':checked');
-    store.set('{{ site.domain }}_filter_v3', filterState);
-    update_conf_list();
-  });
-
-  // ========== Format Conference Dates in Cards ==========
   $('.conf-date-display').each(function() {
     var $el = $(this);
     var start = moment($el.data('start'));
     var end = moment($el.data('end'));
     if (start.isValid() && end.isValid()) {
-      var formatted;
-      if (start.year() === end.year() && start.month() === end.month()) {
-        formatted = start.format('MMM D') + ' – ' + end.format('D, YYYY');
-      } else if (start.year() === end.year()) {
-        formatted = start.format('MMM D') + ' – ' + end.format('MMM D, YYYY');
-      } else {
-        formatted = start.format('MMM D, YYYY') + ' – ' + end.format('MMM D, YYYY');
-      }
-      $el.html('📅 ' + formatted);
+      $el.text(formatDateRange(start, end));
     }
   });
 
   // ========== Calendar ==========
-  var currentMonth = moment();
 
-  // Collect all deadlines with conference info
-  var allDeadlines = {};
-  for (var confId in deadlineByConf) {
-    var deadline = deadlineByConf[confId];
-    if (deadline) {
-      var dateKey = deadline.format('YYYY-MM-DD');
-      if (!allDeadlines[dateKey]) {
-        allDeadlines[dateKey] = [];
-      }
-      // Extract conference name from ID
-      var confName = confId.replace(/-\d+$/, '').replace(/-/g, ' ').toUpperCase();
-      allDeadlines[dateKey].push({
-        id: confId,
-        name: confName,
-        time: deadline.format('HH:mm')
+  Object.keys(deadlineByConf).forEach(function(cardId) {
+    var deadline = deadlineByConf[cardId];
+    if (!deadline) return;
+    var dateKey = deadline.format('YYYY-MM-DD');
+    (allDeadlines[dateKey] = allDeadlines[dateKey] || []).push({
+      id: cardId,
+      name: cardId.replace(/-\d+$/, '').replace(/-/g, ' ').toUpperCase(), // fallback when the card has no title
+      time: deadline.format('HH:mm')
+    });
+  });
+
+  CONFERENCE_DATES.forEach(function(conference) {
+    var range = conference.date.split('/');
+    if (range.length < 2) return;
+    var day = moment(range[0]);
+    var end = moment(range[1]);
+    while (day.isSameOrBefore(end)) {
+      var dateKey = day.format('YYYY-MM-DD');
+      (allConferenceDates[dateKey] = allConferenceDates[dateKey] || []).push({
+        name: conference.name,
+        place: conference.place
       });
+      day.add(1, 'day');
+    }
+  });
+
+  function detailRow(kind, label, name, sub, targetId) {
+    return '<div class="tip-row' + (targetId ? ' info-link' : '') + '"' +
+      (targetId ? ' data-target="' + escapeHtml(targetId) + '" role="button" tabindex="0"' : '') + '>' +
+      '<span class="tip-kind is-' + kind + '">' + label + '</span>' +
+      '<span class="tip-name">' + escapeHtml(name) + (sub ? '<small>' + escapeHtml(sub) + '</small>' : '') + '</span></div>';
+  }
+
+  function resetDayDetails() {
+    $('#day-title').text('');
+    $('#calendar-info-box').html('<p class="day-empty">Hover over a date to see its deadlines and conferences.</p>');
+  }
+
+  // One cell of the current month; days with events get a highlight and their details on hover
+  function buildDayCell(dateStr, dayNumber, todayStr) {
+    var $day = $('<div class="calendar-day"></div>').text(dayNumber).attr('data-date', dateStr);
+    if (dateStr === todayStr) {
+      $day.addClass('today');
+    }
+
+    var deadlines = allDeadlines[dateStr] || [];
+    var conferences = allConferenceDates[dateStr] || [];
+    $day.toggleClass('has-conference', conferences.length > 0);
+    $day.toggleClass('has-deadline', deadlines.length > 0);
+
+    // Deadlines first, then conferences
+    var rows = deadlines.map(function(item) {
+      var title = $.trim($('#' + item.id + ' .card-title-text').text()) || item.name;
+      return detailRow('deadline', 'Deadline', title, item.time, item.id);
+    }).concat(conferences.map(function(conference) {
+      return detailRow('conference', 'Conference', conference.name, conference.place, null);
+    }));
+
+    if (rows.length > 0) {
+      var heading = moment(dateStr, 'YYYY-MM-DD').format('MMM D, YYYY (ddd)');
+      $day.on('mouseenter', function() {
+        $('#day-title').text(heading);
+        $('#calendar-info-box').html(rows.join(''));
+      });
+    }
+    return $day;
+  }
+
+  function renderCalendar() {
+    var $container = $('#calendar-days').empty();
+
+    // The details panel keeps the last hovered day until the month changes
+    resetDayDetails();
+    $('#calendar-title').text(currentMonth.format('MMMM YYYY'));
+
+    var leadingDays = currentMonth.clone().startOf('month').day();
+    var previousMonthDays = currentMonth.clone().subtract(1, 'month').daysInMonth();
+    var monthDays = currentMonth.daysInMonth();
+    var todayStr = moment().format('YYYY-MM-DD');
+    var monthPrefix = currentMonth.format('YYYY-MM');
+    var i;
+
+    for (i = leadingDays - 1; i >= 0; i--) {
+      $container.append($('<div class="calendar-day other-month"></div>').text(previousMonthDays - i));
+    }
+    for (i = 1; i <= monthDays; i++) {
+      $container.append(buildDayCell(monthPrefix + '-' + pad2(i), i, todayStr));
+    }
+    // Fill the grid to six rows with the start of the next month
+    var trailingDays = 42 - $container.children().length;
+    for (i = 1; i <= trailingDays; i++) {
+      $container.append($('<div class="calendar-day other-month"></div>').text(i));
     }
   }
 
-  // Collect all conference dates (from editions with ISO date ranges)
-  var allConferenceDates = {};
-  {% for conf in site.data.conferences %}
-  {% for edition in conf.editions %}
-  {% if edition.date and edition.date != "TBA" %}
-  (function() {
-    var dateStr = "{{ edition.date }}";
-    if (dateStr.indexOf('/') !== -1) {
-      var parts = dateStr.split('/');
-      var startDate = moment(parts[0]);
-      var endDate = moment(parts[1]);
-      var current = startDate.clone();
-      while (current.isSameOrBefore(endDate)) {
-        var dateKey = current.format('YYYY-MM-DD');
-        if (!allConferenceDates[dateKey]) {
-          allConferenceDates[dateKey] = [];
-        }
-        allConferenceDates[dateKey].push({
-          name: "{{ conf.name }} {{ edition.year }}",
-          place: "{{ edition.place }}"
-        });
-        current.add(1, 'day');
+  // Deadline rows in the details panel jump to their card (Enter and Space work too)
+  $('#calendar-info-box')
+    .on('click', '.info-link', function() {
+      var $target = $('#' + $(this).data('target'));
+      if ($target.length) {
+        scrollToElement($target);
+        flash($target);
       }
-    }
-  })();
-  {% endif %}
-  {% endfor %}
-  {% endfor %}
-
-  function renderCalendar() {
-    var $container = $('#calendar-days');
-    $container.empty();
-
-    // Update title
-    $('#calendar-title').text(currentMonth.format('MMMM YYYY'));
-
-    // Get first day of month and total days
-    var firstDay = currentMonth.clone().startOf('month');
-    var lastDay = currentMonth.clone().endOf('month');
-    var startDayOfWeek = firstDay.day();
-    var totalDays = lastDay.date();
-
-    // Previous month days
-    var prevMonth = currentMonth.clone().subtract(1, 'month');
-    var prevMonthDays = prevMonth.daysInMonth();
-    for (var i = startDayOfWeek - 1; i >= 0; i--) {
-      var day = prevMonthDays - i;
-      var $day = $('<div class="calendar-day other-month"></div>').text(day);
-      $container.append($day);
-    }
-
-    // Current month days
-    var todayStr = moment().format('YYYY-MM-DD');
-    for (var d = 1; d <= totalDays; d++) {
-      var dateStr = currentMonth.format('YYYY-MM') + '-' + String(d).padStart(2, '0');
-      var $day = $('<div class="calendar-day"></div>').text(d);
-      $day.attr('data-date', dateStr);
-
-      // Today highlight
-      if (dateStr === todayStr) {
-        $day.addClass('today');
-      }
-
-      // Build combined tooltip
-      var tooltipParts = [];
-
-      // Conference date highlight (blue)
-      if (allConferenceDates[dateStr]) {
-        $day.addClass('has-conference');
-        allConferenceDates[dateStr].forEach(function(c) {
-          tooltipParts.push('📍 ' + c.name + (c.place ? ' @ ' + c.place : ''));
-        });
-      }
-
-      // Deadline highlight (red) - takes visual priority over conference
-      if (allDeadlines[dateStr]) {
-        $day.addClass('has-deadline');
-        allDeadlines[dateStr].forEach(function(dl) {
-          tooltipParts.push('<span class="info-link" data-target="' + dl.id + '" style="color: #8b0029; font-weight: 600; cursor: pointer; text-decoration: underline;">⏰ ' + dl.name + ' (' + dl.time + ')</span>');
-        });
-      }
-
-      // Set combined tooltip and click handler
-      if (tooltipParts.length > 0) {
-        $day.data('tooltip', tooltipParts.join('<br>'));
-        $day.css('cursor', 'pointer');
-
-        $day.on('mouseenter', function() {
-          $('#calendar-info-box').html($(this).data('tooltip')).css('visibility', 'visible');
-        });
-        
-        $day.on('mouseleave', function() {
-          $('#calendar-info-box').css('visibility', 'hidden');
-        });
-      }
-
-      $container.append($day);
-    }
-
-    // Delegated click event for links in the info box
-    $('#calendar-info-box').off('click', '.info-link').on('click', '.info-link', function() {
-      var targetId = $(this).data('target');
-      if (targetId) {
-        var $target = $('#' + targetId);
-        if ($target.length) {
-          $('html, body').animate({
-            scrollTop: $target.offset().top - 100
-          }, 500);
-          $target.addClass('border border-3 border-warning');
-          setTimeout(function() {
-            $target.removeClass('border border-3 border-warning');
-          }, 2000);
-        }
+    })
+    .on('keydown', '.info-link', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        $(this).trigger('click');
       }
     });
 
-    // Next month days (fill remaining grid)
-    var totalCells = $container.children().length;
-    var remaining = 42 - totalCells; // 6 rows x 7 days
-    for (var n = 1; n <= remaining; n++) {
-      var $day = $('<div class="calendar-day other-month"></div>').text(n);
-      $container.append($day);
-    }
-  }
-
-  // Calendar navigation
   $('#prev-month').on('click', function() {
     currentMonth.subtract(1, 'month');
     renderCalendar();
@@ -579,6 +473,5 @@ $(function() {
     renderCalendar();
   });
 
-  // Initial render
   renderCalendar();
 });
