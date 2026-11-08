@@ -1,6 +1,6 @@
 ---
 ---
-<html>
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
@@ -17,492 +17,299 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
     integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <style>
-    .custom-nav-color {
-      background-color: #8b0029
-    }
-
-    /* Calendar Styles */
-    .calendar {
-      font-family: 'Pretendard', 'Inter', sans-serif;
-      width: 340px;
-      max-width: 100%;
-    }
-
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .calendar-header h5 {
-      margin: 0;
-      font-weight: 700;
-      font-size: 1.05rem;
-    }
-
-    .calendar-nav {
-      background: none;
-      border: none;
-      border-radius: 50%;
-      width: 26px;
-      height: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      cursor: pointer;
-      font-size: 0.85rem;
-      color: #6c757d;
-      transition: background 0.15s ease, color 0.15s ease;
-    }
-
-    .calendar-nav:hover {
-      background: #f1f3f5;
-      color: #212529;
-    }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      row-gap: 6px;
-      text-align: center;
-    }
-
-    .calendar-weekday {
-      font-weight: 600;
-      font-size: 0.68rem;
-      color: #adb5bd;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-      padding: 0.4rem 0;
-    }
-
-    .calendar-day {
-      width: 34px;
-      height: 34px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      font-weight: 500;
-      border-radius: 50%;
-      cursor: default;
-      position: relative;
-      margin: 0 auto;
-      transition: background 0.15s ease;
-    }
-
-    .calendar-day.other-month {
-      color: #ced4da;
-    }
-
-    .calendar-day.today {
-      background: #e9ecef;
-      font-weight: 600;
-    }
-
-    .calendar-day.has-deadline {
-      background: #8b0029;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .calendar-day.has-deadline:hover {
-      background: #a30030;
-    }
-
-    .calendar-day.has-conference {
-      background: #0d6efd;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .calendar-day.has-conference:hover {
-      background: #0b5ed7;
-    }
-
-    .calendar-day.has-deadline.has-conference {
-      background: linear-gradient(135deg, #8b0029 50%, #0d6efd 50%);
-    }
-
-    .calendar-day.has-deadline.has-conference:hover {
-      background: linear-gradient(135deg, #a30030 50%, #0b5ed7 50%);
-    }
-
-    .calendar-day .deadline-dot {
-      position: absolute;
-      bottom: 1px;
-      width: 3px;
-      height: 3px;
-      background: #8b0029;
-      border-radius: 50%;
-    }
-
-    .calendar-day.has-deadline .deadline-dot {
-      background: white;
-    }
-
-    .calendar-info-box {
-      margin-top: 1rem;
-      padding: 0.75rem 0.9rem;
-      background: #f8f9fa;
-      border: none;
-      border-radius: 12px;
-      font-size: 0.76rem;
-      text-align: left;
-      height: 85px;
-      visibility: hidden;
-      color: #333;
-    }
-
-    /* Calendar Legend */
-    .calendar-legend {
-      display: flex;
-      gap: 1rem;
-      font-size: 0.7rem;
-      color: #adb5bd;
-      justify-content: center;
-      margin-top: 0.9rem;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
-    }
-
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-
-    .legend-dot.legend-deadline {
-      background: #8b0029;
-    }
-
-    .legend-dot.legend-conference {
-      background: #0d6efd;
-    }
-
-    .legend-dot.legend-today {
-      background: #e9ecef;
-      border: 1px solid #adb5bd;
-    }
-
-    /* Conference Date Display */
-    .conf-date-display {
-      font-weight: 500;
-      color: #0d6efd;
-    }
-
-    .bg-orange {
-      background-color: #fd7e14 !important;
-    }
-
-    .navbar-brand {
-      white-space: normal;
-      flex: 1 1 auto;
-      min-width: 0;
-    }
-
-    .favorite-star {
-      cursor: pointer;
-      font-size: 1.25rem;
-      color: #e0e0e0;
-      margin-left: 8px;
-      transition: color 0.2s;
-      user-select: none;
-    }
-    .favorite-star:hover,
-    .favorite-star.active {
-      color: #ffc107;
-    }
-
-    @media (max-width: 768px) {
-      .calendar-day {
-        width: 38px;
-        height: 38px;
-        font-size: 0.95rem;
-      }
-    }
-
-    @media (max-width: 576px) {
-      .navbar-brand {
-        font-size: 1.05rem;
-      }
-    }
-  </style>
 </head>
 
-<body class="bg-light">
-  <nav class="navbar navbar-expand-lg navbar-dark custom-nav-color">
-    <div class="container d-flex flex-wrap align-items-center py-2" style="min-height: 60px;">
-      <a class="navbar-brand d-flex align-items-center mb-0" href="/">
-        <img src="/static/img/logo.png" alt="SSP" width="117" height="50"
-          class="d-inline-block align-text-top me-2 flex-shrink-0">
-        <span>{{ site.title }}</span>
+<body>
+  <nav class="site-nav" aria-label="SSP Lab">
+    <div class="container nav-inner">
+      <a class="nav-brand" href="/" aria-label="{{ site.title }}">
+        <img src="/static/img/logo.png" alt="SSP Lab" width="117" height="50">
+        <span class="nav-brand-text">
+          <span class="nav-brand-title">{{ site.title }}</span>
+          <span class="nav-brand-sub">SSP Lab, Korea University</span>
+        </span>
       </a>
-      <span class="d-none d-md-inline-flex align-items-center">
-        <span class="mx-3" style="color: rgba(255, 255, 255, 0.3);">|</span>
-        <a href="https://ssp.korea.ac.kr" class="text-decoration-none"
-          style="color: #fcfcde; opacity: 0.85; font-size: 0.9rem;">SSP Lab @ Korea University</a>
-      </span>
+      <a class="nav-lab" href="https://ssp.korea.ac.kr" aria-label="SSP Lab @ Korea University">
+        <span class="nav-lab-long">SSP Lab @ Korea University</span>
+        <span class="nav-lab-short">SSP Lab</span>
+        <span class="nav-lab-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+      </a>
     </div>
   </nav>
 
   <div class="container py-5">
-    <div class="card shadow-sm mb-5">
+    <div class="card mb-4">
       <div class="card-body">
-        <div class="mb-4">
-          <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
-            <div>
-              <h3 class="page-title">Security & Software Engineering Conference Deadline <span class="text-muted"
-                  style="font-weight: 600; font-size: 0.6em;">(Selected)</span></h3>
+        <div>
+          <div class="page-head-top">
+            <div class="page-head-text">
+              <h3 class="page-title">Security & Software Engineering Conference Deadline <span
+                  class="page-title-tag">(Selected)</span></h3>
               <p class="page-subtitle mb-0">D-day countdown is based on the "Research Papers Full Paper Submission"
                 deadline.</p>
             </div>
-            <div class="d-flex flex-wrap align-items-center gap-2">
-              <div class="d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill"
-                style="background-color: rgba(139, 0, 41, 0.1);">
-                <span style="font-size: 0.82rem; color: #8b0029; font-weight: 600;">⭐ Support this project:</span>
+            <div class="page-head-actions">
+              <div class="star-pill">
+                <span class="star-pill-label">⭐ Support this project:</span>
                 <iframe
                   src="https://ghbtns.com/github-btn.html?user={{ site.github_username }}&repo={{ site.github_repo }}&type=star&count=true"
-                  frameborder="0" scrolling="0" width="100px" height="20px"></iframe>
-              </div>
-              <a target="_blank" href="//github.com/{{ site.github_username }}/{{ site.github_repo }}"
-                class="pr-suggest-btn">GitHub PR로 제안하기</a>
-            </div>
-          </div>
-
-          <p class="lead mb-1">{{ site.english_description }}</p>
-          <p class="lead mb-0">{{ site.description }}</p>
-        </div>
-
-        <div class="d-flex flex-wrap gap-3 gap-lg-5 mb-4 justify-content-center align-items-stretch">
-          <!-- Calendar Section -->
-          <div class="d-flex flex-column">
-            <div class="p-4 bg-white rounded-4 shadow-sm d-flex align-items-center justify-content-center flex-grow-1">
-              <div class="calendar">
-                <div class="calendar-header">
-                  <button class="calendar-nav" id="prev-month">&lt;</button>
-                  <h5 id="calendar-title"></h5>
-                  <button class="calendar-nav" id="next-month">&gt;</button>
-                </div>
-                <div class="calendar-grid">
-                  <div class="calendar-weekday">Sun</div>
-                  <div class="calendar-weekday">Mon</div>
-                  <div class="calendar-weekday">Tue</div>
-                  <div class="calendar-weekday">Wed</div>
-                  <div class="calendar-weekday">Thu</div>
-                  <div class="calendar-weekday">Fri</div>
-                  <div class="calendar-weekday">Sat</div>
-                </div>
-                <div class="calendar-grid" id="calendar-days"></div>
-                <div class="calendar-legend">
-                  <span class="legend-item"><span class="legend-dot legend-deadline"></span>Deadline</span>
-                  <span class="legend-item"><span class="legend-dot legend-conference"></span>Conference</span>
-                  <span class="legend-item"><span class="legend-dot legend-today"></span>Today</span>
-                </div>
-                <div id="calendar-info-box" class="calendar-info-box"></div>
+                  title="GitHub star" frameborder="0" scrolling="0" width="100px" height="20px"></iframe>
               </div>
             </div>
           </div>
 
-          <!-- Filter Section -->
-          <div class="d-flex flex-column">
-            <div class="p-4 bg-white rounded-4 shadow-sm d-flex flex-column justify-content-center flex-grow-1">
-              <h6 class="mb-4 fw-bold text-uppercase text-muted" style="letter-spacing: 0.5px;">Filter Options</h6>
-              <form class="form-inline" id="filter-form">
+          <div class="page-intro">
+            <p class="lead mb-0">{{ site.english_description }}</p>
+            <p class="lead mb-0" lang="ko">{{ site.description }}</p>
+          </div>
 
-                <!-- Topic -->
-                <div class="mb-4">
-                  <div class="filter-label">Topic</div>
-                  <div class="d-flex gap-2 flex-wrap">
-                    <div class="form-check">
-                      <input class="form-check-input field-radio" type="radio" name="field" id="ALL-radio" value="ALL"
-                        checked>
-                      <label class="form-check-label" for="ALL-radio">All</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input field-radio" type="radio" name="field" id="SEC-radio" value="SEC">
-                      <label class="form-check-label" for="SEC-radio">Security</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input field-radio" type="radio" name="field" id="SE-radio" value="SE">
-                      <label class="form-check-label" for="SE-radio">Software Engineering</label>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Top Conference  -->
-                <div class="mb-4" id="top-section">
-                  <div class="filter-label">Top Conference</div>
-                  <div class="d-flex gap-2 flex-wrap">
-                    <div class="form-check">
-                      <input class="form-check-input top-radio" type="radio" name="topconf" id="TOP-ALL-radio"
-                        value="ALL" checked>
-                      <label class="form-check-label" for="TOP-ALL-radio">All</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input top-radio" type="radio" name="topconf" id="TOP-YES-radio"
-                        value="YES">
-                      <label class="form-check-label" for="TOP-YES-radio">Only Top</label>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- BK21-IF -->
-                <div class="mb-4" id="bkif-section">
-                  <div class="filter-label">BK21-IF</div>
-                  <div class="d-flex gap-2 flex-wrap">
-                    <div class="form-check">
-                      <input class="form-check-input bkif-checkbox" type="checkbox" id="BKIF-4-checkbox" value="BKIF-4">
-                      <label class="form-check-label" for="BKIF-4-checkbox">4</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input bkif-checkbox" type="checkbox" id="BKIF-3-checkbox" value="BKIF-3">
-                      <label class="form-check-label" for="BKIF-3-checkbox">3</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input bkif-checkbox" type="checkbox" id="BKIF-2-checkbox" value="BKIF-2">
-                      <label class="form-check-label" for="BKIF-2-checkbox">2</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input bkif-checkbox" type="checkbox" id="BKIF-1-checkbox" value="BKIF-1">
-                      <label class="form-check-label" for="BKIF-1-checkbox">1</label>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Type -->
-                <div class="mb-4">
-                  <div class="filter-label">Type</div>
-                  <div class="d-flex gap-2 flex-wrap">
-                    <div class="form-check">
-                      <input class="form-check-input type-radio" type="radio" name="conftype" id="TYPE-ALL-radio"
-                        value="ALL" checked>
-                      <label class="form-check-label" for="TYPE-ALL-radio">All</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input type-radio" type="radio" name="conftype" id="CONF-radio"
-                        value="CONF">
-                      <label class="form-check-label" for="CONF-radio">Conference</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input type-radio" type="radio" name="conftype" id="SHOP-radio"
-                        value="SHOP">
-                      <label class="form-check-label" for="SHOP-radio">Workshop</label>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Status -->
-                <div class="mb-1">
-                  <div class="filter-label">Status</div>
-                  <div class="d-flex gap-2 flex-wrap">
-                    <div class="form-check">
-                      <input class="form-check-input hide-tba-checkbox" type="checkbox" id="HIDE-TBA-checkbox"
-                        value="YES">
-                      <label class="form-check-label" for="HIDE-TBA-checkbox">Hide TBA conference</label>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input hide-past-checkbox" type="checkbox" id="HIDE-PAST-checkbox"
-                        value="YES">
-                      <label class="form-check-label" for="HIDE-PAST-checkbox">Hide past deadlines</label>
-                    </div>
-                  </div>
-                </div>
-              </form>
+          <div class="update-note" role="note">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+            <div>
+              <p>Conference information is being updated by AI agents and administrators, so some of it may be
+                wrong. If you spot an error, please send a <a target="_blank" rel="noopener"
+                  href="https://github.com/{{ site.github_username }}/{{ site.github_repo }}">pull request on
+                  GitHub</a>.</p>
+              <p lang="ko">AI 에이전트와 관리자에 의해 컨퍼런스 정보가 업데이트되고 있어 잘못된 정보가 있을 수 있습니다.
+                오류를 발견하시면 <a target="_blank" rel="noopener"
+                  href="https://github.com/{{ site.github_username }}/{{ site.github_repo }}">GitHub PR</a>을 보내주세요.</p>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="mb-4">
-      <input type="text" id="conf-search" class="form-control form-control-lg shadow-sm" placeholder="🔍 Search by conference name..." style="border-radius: 12px; border-color: #dee2e6; font-size: 1rem; padding: 0.8rem 1.2rem; width: 100%;">
-    </div>
-
-    <div class="conf-container">
-      {% for conf in site.data.conferences %}
-      {% for edition in conf.editions %}
-      {% if edition.deadline %}
-      {% assign num_deadlines = edition.deadline.size %}
-      {% assign range_end = edition.deadline.size | minus: 1 %}
-      {% for i in (0..range_end) %}
-      {% assign year = edition.year %}
-      {% assign prevyear = edition.year | minus: 1 %}
-      {% assign deadline = edition.deadline[i] | replace: '%y', year | replace: '%Y', prevyear %}
-      {% assign conf_id = conf.name | append: edition.year | append: '-' | append: i | slugify %}
-      <div id="{{ conf_id }}"
-        class="conf card shadow-sm mb-4 position-relative {% if deadline == 'TBA' %}tba {% endif %}{% for tag in conf.tags %} {{tag}} {% endfor %}"
-        data-search="{{ conf.name | append: ' ' | append: edition.year | downcase }}">
-        <!-- D-Day Badge -->
-        <div class="position-absolute" style="top: -10px; right: 20px; z-index: 10;">
-          <span class="badge rounded-pill px-3 py-1 shadow-sm d-day-badge"
-            style="display: none; font-size: 0.8rem; letter-spacing: 0.5px;"></span>
+    <div class="cal-row">
+      <div class="panel calendar-panel" aria-label="Calendar">
+        <div class="calendar">
+          <div class="calendar-header">
+            <button class="calendar-nav" id="prev-month">&lt;</button>
+            <h5 id="calendar-title"></h5>
+            <button class="calendar-nav" id="next-month">&gt;</button>
+          </div>
+          <div class="calendar-grid">
+            <div class="calendar-weekday">Sun</div>
+            <div class="calendar-weekday">Mon</div>
+            <div class="calendar-weekday">Tue</div>
+            <div class="calendar-weekday">Wed</div>
+            <div class="calendar-weekday">Thu</div>
+            <div class="calendar-weekday">Fri</div>
+            <div class="calendar-weekday">Sat</div>
+          </div>
+          <div class="calendar-grid" id="calendar-days"></div>
+          <div class="calendar-legend">
+            <span class="legend-item"><span class="legend-dot legend-deadline"></span>Deadline</span>
+            <span class="legend-item"><span class="legend-dot legend-conference"></span>Conference</span>
+            <span class="legend-item"><span class="legend-dot legend-today"></span>Today</span>
+          </div>
         </div>
-        <div class="card-body">
-          <div class="row">
-            <div class="col-lg-6">
-              <h3 class="card-title d-flex align-items-center">
-                <a href="{{ edition.link }}" class="text-decoration-none">{{conf.name}} {{ edition.year }}</a>
-                <span class="favorite-star" data-conf-id="{{ conf_id }}" title="Toggle favorite">★</span>
-              </h3>
-              <div class="text-muted">
-                {{ conf.description }}<br>
-                {% if edition.date and edition.date != "TBA" %}
-                {% assign date_parts = edition.date | split: "/" %}
-                <span class="conf-date-display" data-start="{{ date_parts[0] }}" data-end="{{ date_parts[1] }}">📅 {{
-                  date_parts[0] }} ~ {{ date_parts[1] }}</span>
-                {% else %}
-                📅 TBA
-                {% endif %}
-                {% if edition.place %}// <a href="http://maps.google.com/?q={{ edition.place }}">{{ edition.place
-                  }}</a>{% endif %}
-                {% if conf.tags contains 'BKIF-4' %}// <span class="badge bg-red fw-bold">BK21-IF 4</span>{% elsif
-                conf.tags contains 'BKIF-3' %}// <span class="badge bg-red fw-bold">BK21-IF 3</span>{% elsif conf.tags
-                contains 'BKIF-2' %}// <span class="badge bg-dark fw-bold">BK21-IF 2</span>{% elsif conf.tags contains
-                'BKIF-1' %}// <span class="badge bg-dark fw-bold">BK21-IF 1</span>{% endif %}
+      </div>
+
+      <div class="panel day-panel" aria-live="polite">
+        <div class="day-panel-inner">
+          <h5 class="panel-title" id="day-title"></h5>
+          <div id="calendar-info-box" class="calendar-info-box"></div>
+        </div>
+      </div>
+
+      <div class="panel filter-panel">
+        <h5 class="panel-title">Filter Options</h5>
+        <form class="filter-form" id="filter-form">
+
+          <!-- Topic -->
+          <div class="filter-group">
+            <div class="filter-label">Topic</div>
+            <div class="chips chips--single">
+              <div class="form-check">
+                <input class="form-check-input field-radio" type="radio" name="field" id="ALL-radio" value="ALL"
+                  checked>
+                <label class="form-check-label" for="ALL-radio">All</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input field-radio" type="radio" name="field" id="SEC-radio" value="SEC">
+                <label class="form-check-label" for="SEC-radio">Security</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input field-radio" type="radio" name="field" id="SE-radio" value="SE">
+                <label class="form-check-label" for="SE-radio">Software Engineering</label>
               </div>
             </div>
-            <div class="col-lg-6 mt-4 mt-lg-0">
-              <span class="timer"></span>
-              <div class="deadline">
-                <div>
-                  {% if num_deadlines >=2 %}
-                  Deadline ({{ i | plus: 1 }} / {{ num_deadlines }}):
-                  {% else %}
-                  Deadline:
-                  {% endif %}
-                  <span class="deadline-time">
-                    {{ deadline }}
-                  </span>
-                  <a href="#" target="_blank" rel="noopener" class="add-calendar-btn" style="display: none;">+ Add to
-                    Calendar</a>
-                  <div class="meta">
-                    {{ edition.comment }}
+          </div>
+
+          <!-- Top Conference  -->
+          <div class="filter-group" id="top-section">
+            <div class="filter-label">Top Conference</div>
+            <div class="chips chips--single">
+              <div class="form-check">
+                <input class="form-check-input top-radio" type="radio" name="topconf" id="TOP-ALL-radio"
+                  value="ALL" checked>
+                <label class="form-check-label" for="TOP-ALL-radio">All</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input top-radio" type="radio" name="topconf" id="TOP-YES-radio"
+                  value="YES">
+                <label class="form-check-label" for="TOP-YES-radio">Only Top</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- BK21-IF -->
+          <div class="filter-group" id="bkif-section">
+            <div class="filter-label">BK21-IF</div>
+            <div class="chips">
+              <div class="form-check">
+                <input class="form-check-input bkif-checkbox" type="checkbox" id="BKIF-4-checkbox" value="BKIF-4">
+                <label class="form-check-label" for="BKIF-4-checkbox">4</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input bkif-checkbox" type="checkbox" id="BKIF-3-checkbox" value="BKIF-3">
+                <label class="form-check-label" for="BKIF-3-checkbox">3</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input bkif-checkbox" type="checkbox" id="BKIF-2-checkbox" value="BKIF-2">
+                <label class="form-check-label" for="BKIF-2-checkbox">2</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input bkif-checkbox" type="checkbox" id="BKIF-1-checkbox" value="BKIF-1">
+                <label class="form-check-label" for="BKIF-1-checkbox">1</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Type -->
+          <div class="filter-group">
+            <div class="filter-label">Type</div>
+            <div class="chips chips--single">
+              <div class="form-check">
+                <input class="form-check-input type-radio" type="radio" name="conftype" id="TYPE-ALL-radio"
+                  value="ALL" checked>
+                <label class="form-check-label" for="TYPE-ALL-radio">All</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input type-radio" type="radio" name="conftype" id="CONF-radio"
+                  value="CONF">
+                <label class="form-check-label" for="CONF-radio">Conference</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input type-radio" type="radio" name="conftype" id="SHOP-radio"
+                  value="SHOP">
+                <label class="form-check-label" for="SHOP-radio">Workshop</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Status -->
+          <div class="filter-group">
+            <div class="filter-label">Status</div>
+            <div class="chips">
+              <div class="form-check">
+                <input class="form-check-input hide-tba-checkbox" type="checkbox" id="HIDE-TBA-checkbox"
+                  value="YES">
+                <label class="form-check-label" for="HIDE-TBA-checkbox">Hide TBA conference</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input hide-past-checkbox" type="checkbox" id="HIDE-PAST-checkbox"
+                  value="YES">
+                <label class="form-check-label" for="HIDE-PAST-checkbox">Hide past deadlines</label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="page-main">
+      <div>
+        <input type="text" id="conf-search" class="conf-search" placeholder="🔍 Search by conference name..." autocomplete="off">
+      </div>
+
+      <ul class="topic-legend" aria-label="Card colour: topic">
+        <li><span class="topic-key topic-key--sec" aria-hidden="true"></span>Security</li>
+        <li><span class="topic-key topic-key--se" aria-hidden="true"></span>Software Engineering</li>
+      </ul>
+
+      <div class="conf-container">
+        {% for conf in site.data.conferences %}
+        {% for edition in conf.editions %}
+        {% if edition.deadline %}
+        {% assign num_deadlines = edition.deadline.size %}
+        {% assign range_end = edition.deadline.size | minus: 1 %}
+        {% for i in (0..range_end) %}
+        {% assign year = edition.year %}
+        {% assign prevyear = edition.year | minus: 1 %}
+        {% assign deadline = edition.deadline[i] | replace: '%y', year | replace: '%Y', prevyear %}
+        {% assign conf_id = conf.name | append: edition.year | append: '-' | append: i | slugify %}
+        {% comment %}Nothing to show (date, place and deadline all TBA or empty): skip the card{% endcomment %}
+        {% assign has_info = false %}
+        {% if deadline != 'TBA' and deadline != blank %}{% assign has_info = true %}{% endif %}
+        {% if edition.date and edition.date != 'TBA' %}{% assign has_info = true %}{% endif %}
+        {% if edition.place and edition.place != 'TBA' %}{% assign has_info = true %}{% endif %}
+        {% if has_info %}
+        <div id="{{ conf_id }}"
+          class="conf card {% if deadline == 'TBA' %}tba {% endif %}{% for tag in conf.tags %} {{tag}} {% endfor %}"
+          data-search="{{ conf.name | append: ' ' | append: edition.year | downcase }}">
+          <!-- D-Day Badge -->
+          <div class="d-day">
+            <span class="d-day-badge" style="display: none;"></span>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-lg-6">
+                <h3 class="card-title d-flex align-items-center">
+                  {% if conf.tags contains 'SEC' %}<span class="visually-hidden">Security: </span>{% elsif conf.tags contains 'SE' %}<span class="visually-hidden">Software engineering: </span>{% endif %}
+                  {% if edition.link %}<a href="{{ edition.link }}" class="card-title-text">{{conf.name}} {{ edition.year }}</a>{% else %}<span class="card-title-text">{{conf.name}} {{ edition.year }}</span>{% endif %}
+                  {% if num_deadlines >= 2 %}<span
+                    class="cycle-tag cycle-tag--{{ i | plus: 1 }}">Cycle {{ i | plus: 1 }}</span>{% endif %}
+                  <span class="favorite-star" data-conf-id="{{ conf_id }}" title="Toggle favorite">★</span>
+                </h3>
+                <div class="conf-info">
+                  <div>{{ conf.description }}</div>
+                  <div class="conf-meta">
+                    {% if edition.date and edition.date != "TBA" %}
+                    {% assign date_parts = edition.date | split: "/" %}
+                    <span class="conf-meta-item conf-meta-item--date conf-date-display" data-start="{{ date_parts[0] }}"
+                      data-end="{{ date_parts[1] }}">{{ date_parts[0] }} ~ {{ date_parts[1] }}</span>
+                    {% else %}
+                    <span class="conf-meta-item conf-meta-item--date conf-meta-item--empty" title="TBA">-</span>
+                    {% endif %}
+                    {% if edition.place == "TBA" %}<span class="conf-meta-item conf-meta-item--place conf-meta-item--empty" title="TBA">-</span>{% elsif edition.place %}<a class="conf-meta-item conf-meta-item--place" href="http://maps.google.com/?q={{ edition.place }}">{{ edition.place }}</a>{% endif %}
+                    {% if conf.tags contains 'BKIF-4' %}<span class="conf-meta-item"><span class="bk-tag bk-tag--high">BK21-IF 4</span></span>
+                    {% elsif conf.tags contains 'BKIF-3' %}<span class="conf-meta-item"><span class="bk-tag bk-tag--high">BK21-IF 3</span></span>
+                    {% elsif conf.tags contains 'BKIF-2' %}<span class="conf-meta-item"><span class="bk-tag bk-tag--low">BK21-IF 2</span></span>
+                    {% elsif conf.tags contains 'BKIF-1' %}<span class="conf-meta-item"><span class="bk-tag bk-tag--low">BK21-IF 1</span></span>{% endif %}
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6 mt-4 mt-lg-0">
+                <span class="timer"></span>
+                <div class="deadline">
+                  <div>
+                    Deadline:
+                    <span class="deadline-time">
+                      {{ deadline }}
+                    </span>
+                    <a href="#" target="_blank" rel="noopener" class="add-calendar-btn" style="display: none;">+ Add to
+                      Calendar</a>
+                    <div class="meta">
+                      {{ edition.comment }}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
       </div>
-      {% endfor %}
-      {% endif %}
-      {% endfor %}
-      {% endfor %}
-    </div>
-    <div id="empty-state" class="text-center text-muted py-5" style="display: none;">
-      <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🔍</div>
-      No conferences match the selected filters.
+      <div id="empty-state" class="text-center text-muted py-5" style="display: none;">
+        <div style="font-size: 1.8rem; margin-bottom: 0.5rem;">🔍</div>
+        No conferences match the selected filters.
+      </div>
+
     </div>
 
     <footer class="text-center text-muted py-4">
@@ -528,7 +335,6 @@
   {% if site.ga_id %}
   {% include analytics.html %}
   {% endif %}
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
