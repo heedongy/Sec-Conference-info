@@ -30,7 +30,7 @@
   --conf-blue: #0b4fb8;
   --conf-tint: #e3edff;
 
-  --topic-sec: #c9783a;
+  --topic-sec: #e5202a;
   --topic-se: #5f9a7a;
   --topic-none: #b7c0c4;
 }
@@ -76,7 +76,7 @@ button:focus-visible {
 
 /* ---------- Top bar ---------- */
 .site-nav {
-  background: linear-gradient(180deg, #96002c 0%, #7c0024 100%);
+  background: #8b0028;
   border-bottom: 3px solid var(--cream);
 }
 
@@ -360,6 +360,7 @@ button:focus-visible {
   margin: 0;
 }
 
+
 .update-note a {
   color: var(--brand);
   font-weight: 700;
@@ -478,11 +479,141 @@ button:focus-visible {
   max-width: 100%;
 }
 
+.calendar {
+  position: relative;
+}
+
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
   margin-bottom: 1rem;
+}
+
+.calendar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.calendar-title-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0 -0.4rem;
+  padding: 0.2rem 0.4rem;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.calendar-title-btn::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-right: 1.5px solid var(--muted-color);
+  border-bottom: 1.5px solid var(--muted-color);
+  transform: rotate(45deg);
+}
+
+.calendar-title-btn:hover,
+.calendar-title-btn[aria-expanded="true"] {
+  background: var(--light-bg);
+}
+
+.calendar-today {
+  height: 26px;
+  margin-right: 0.25rem;
+  padding: 0 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: none;
+  color: var(--text-color);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+}
+
+.calendar-today:hover:not(:disabled) {
+  background: var(--light-bg);
+}
+
+.calendar-today:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Month picker: covers the day grid under the header */
+.month-picker {
+  position: absolute;
+  top: 2.6rem;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: #fff;
+}
+
+.month-picker[hidden] {
+  display: none;
+}
+
+.month-picker-year {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.month-picker-grid {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.month-cell {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: none;
+  color: var(--text-color);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.month-cell:hover {
+  background: var(--light-bg);
+}
+
+.month-cell.is-today {
+  border-color: var(--text-color);
+}
+
+.month-cell.is-selected {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: #fff;
+  font-weight: 600;
+}
+
+.month-cell:focus-visible,
+.calendar-today:focus-visible,
+.calendar-title-btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
 }
 
 .calendar-header h5 {
@@ -522,10 +653,8 @@ button:focus-visible {
 .calendar-weekday {
   padding: 0.4rem 0;
   font-weight: 600;
-  font-size: 0.68rem;
+  font-size: 0.75rem;
   color: #adb5bd;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
 }
 
 .calendar-day {
@@ -898,10 +1027,19 @@ button:focus-visible {
   gap: 0.45rem;
 }
 
+.topic-legend .topic-legend-zone {
+  margin-left: auto;
+}
+
+.topic-legend-zone strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+
 .topic-key {
-  width: 3px;
-  height: 14px;
-  border-radius: 1px;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 2px;
 }
 
 .topic-key--sec {
@@ -920,7 +1058,6 @@ button:focus-visible {
 .conf {
   --strip: var(--topic-none);
   margin-bottom: 1rem;
-  box-shadow: inset 3px 0 0 var(--strip);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.15s ease, opacity 0.2s ease;
 }
 
@@ -928,20 +1065,31 @@ button:focus-visible {
   --strip: var(--topic-sec);
 }
 
+/* Topic marker: one small square before the title */
+.conf .card-title::before {
+  content: "";
+  flex: none;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin-right: 0.55rem;
+  border-radius: 2px;
+  background: var(--strip);
+}
+
 .conf.SE {
   --strip: var(--topic-se);
 }
 
-/* A slight lift on hover; the topic edge stays */
+/* A slight lift on hover */
 .conf:hover {
   border-color: #b4c3c8;
-  box-shadow: inset 3px 0 0 var(--strip), 0 6px 16px rgba(31, 42, 48, 0.08);
+  box-shadow: 0 6px 16px rgba(31, 42, 48, 0.08);
   transform: translateY(-2px);
 }
 
 .conf.tba {
-  background: #fbfaf6;
-  border-color: #e9e4d4;
+  background: #f3f5f6;
+  border-color: #dde2e5;
 }
 
 .conf.past {
@@ -965,7 +1113,8 @@ button:focus-visible {
 }
 
 .conf .card-title {
-  gap: 0.25rem;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.25rem;
   margin-bottom: 0.4rem;
   font-size: 1.3rem;
   font-weight: 700;
@@ -975,6 +1124,10 @@ button:focus-visible {
 .card-title-text,
 a.card-title-text:hover {
   color: var(--ink);
+}
+
+.card-title-text {
+  overflow-wrap: anywhere;
 }
 
 /* Cycle tag after the name: cool for the first cycle, warm for the later chance */
@@ -1006,17 +1159,36 @@ a.card-title-text:hover {
 }
 
 .favorite-star {
+  --star-line: #9aa5ab;
   margin-left: 8px;
-  color: #e0e0e0;
+  /* Not pinned: an outline star. Pinned: filled. */
+  color: transparent;
+  -webkit-text-stroke: 1.4px var(--star-line);
   font-size: 1.25rem;
   cursor: pointer;
   user-select: none;
-  transition: color 0.2s;
+  transition: color 0.2s, -webkit-text-stroke-color 0.2s;
 }
 
-.favorite-star:hover,
+/* Pinned card: a hairline separates it from the rest */
+.pin-rule {
+  height: 1px;
+  margin: 0.25rem 0 1.25rem;
+  background: var(--line);
+}
+
+/* Past cards cannot be pinned (TBA cards never render a star) */
+.conf.past .favorite-star {
+  display: none;
+}
+
+.favorite-star:hover {
+  -webkit-text-stroke-color: #e0a800;
+}
+
 .favorite-star.active {
   color: #ffc107;
+  -webkit-text-stroke-color: #ffc107;
 }
 
 /* Description and the date / place / tag line */
@@ -1050,6 +1222,7 @@ a.card-title-text:hover {
 
 a.conf-meta-item--place {
   color: #3d7a76;
+  font-weight: 600;
   text-decoration: underline;
   text-decoration-color: #aecfcc;
   text-underline-offset: 0.18em;
@@ -1274,15 +1447,48 @@ a.conf-meta-item--place:hover {
   .timer {
     font-size: 1.3rem;
   }
+
+  /* Stacked halves: a hairline and an even gap between info and countdown */
+  .conf .row > .col-lg-6 + .col-lg-6 {
+    position: relative;
+    margin-top: 1rem !important;
+    padding-top: 1rem;
+  }
+
+  .conf .row > .col-lg-6 + .col-lg-6::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+    right: calc(var(--bs-gutter-x, 1.5rem) * 0.5);
+    border-top: 1px solid var(--line);
+  }
 }
 
 @media (max-width: 575.98px) {
   .conf-meta {
-    gap: 0.35rem 0.9rem;
+    gap: 0.5rem 0.9rem;
+    margin-top: 0.6rem;
   }
 
   .timer {
-    gap: 0.2rem 0.5rem;
+    margin-bottom: 0.45rem;
+  }
+
+  /* Button sits on its own line, flush with the "Deadline:" text */
+  .add-calendar-btn {
+    display: flex;
+    width: fit-content;
+    margin: 0.6rem 0 0;
+    padding: 0.3rem 0.7rem;
+  }
+
+  .deadline .meta {
+    margin-top: 0.6rem;
+  }
+
+  .timer {
+    gap: 0.2rem 0.6rem;
   }
 
   .cd-part {
@@ -1290,19 +1496,19 @@ a.conf-meta-item--place:hover {
   }
 
   .cd-part b {
-    font-size: 1.05rem;
+    font-size: 1.3rem;
   }
 
   .cd-part--days b {
-    font-size: 1.4rem;
+    font-size: 1.75rem;
   }
 
   .cd-part i {
-    font-size: 0.75rem;
+    font-size: 0.85rem;
   }
 
   .cd-part--days i {
-    font-size: 0.85rem;
+    font-size: 0.95rem;
   }
 }
 
@@ -1312,4 +1518,343 @@ a.conf-meta-item--place:hover {
     transform: none;
     transition: none;
   }
+}
+
+/* ---------- Theme toggle ---------- */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.88);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.theme-toggle:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Show the icon of the mode you would switch to */
+.theme-toggle .icon-sun {
+  display: none;
+}
+
+[data-theme="dark"] .theme-toggle .icon-moon {
+  display: none;
+}
+
+[data-theme="dark"] .theme-toggle .icon-sun {
+  display: block;
+}
+
+/* ---------- Dark theme ---------- */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --primary-color: #e1e6e8;
+  --text-color: #e1e6e8;
+  --muted-color: #97a3a9;
+  --light-bg: #14181b;
+
+  --brand: #9a4057;
+  --brand-hover: #ac4d66;
+  --brand-tint: #36242a;
+  --brand-ink: #e3b8c3;
+
+  --ink: #e1e6e8;
+  --ink-soft: #a9b4b9;
+  --line: #2b343a;
+
+  --teal: #3fb0a7;
+  --teal-ink: #9fe0da;
+  --teal-tint: #1c3a38;
+
+  --steel: #8fb0cc;
+
+  --conf-blue: #a9c6ff;
+  --conf-tint: #1d2d4d;
+
+  --topic-sec: #ff4d4d;
+  --topic-se: #6fb08c;
+  --topic-none: #4a555b;
+}
+
+[data-theme="dark"] .site-nav {
+  background: #651d31;
+  border-bottom-color: #2b343a;
+}
+
+[data-theme="dark"] .card,
+[data-theme="dark"] .panel {
+  background: #1b2125;
+  border-color: var(--line);
+}
+
+[data-theme="dark"] .star-pill {
+  background: #212121;
+}
+
+[data-theme="dark"] .star-pill-label {
+  color: #b7c2c7;
+}
+
+[data-theme="dark"] .page-intro,
+[data-theme="dark"] .filter-group {
+  border-top-color: #2b343a;
+}
+
+[data-theme="dark"] .update-note {
+  background: #20272b;
+  color: #c7d0d4;
+}
+
+[data-theme="dark"] .calendar-nav:hover {
+  background: #263036;
+}
+
+[data-theme="dark"] .calendar-weekday,
+[data-theme="dark"] .calendar-legend {
+  color: #7d8a91;
+}
+
+[data-theme="dark"] .calendar-day.other-month {
+  color: #475258;
+}
+
+[data-theme="dark"] .calendar-day.has-conference:hover {
+  background: #28406b;
+}
+
+[data-theme="dark"] .calendar-info-box {
+  color: #d3dadd;
+}
+
+[data-theme="dark"] .tip-row.info-link:hover {
+  background: #232b30;
+}
+
+[data-theme="dark"] .tip-kind.is-deadline {
+  background: rgba(154, 64, 87, 0.28);
+  color: #e3b8c3;
+}
+
+[data-theme="dark"] .filter-label {
+  color: #b7c2c7;
+}
+
+[data-theme="dark"] .form-check-label {
+  border-color: #38434a;
+  background: #20272b;
+  color: #c7d0d4;
+}
+
+[data-theme="dark"] .form-check-label:hover {
+  background: #263036;
+  border-color: #5c6b72;
+}
+
+[data-theme="dark"] .form-check-input:checked + .form-check-label:hover {
+  background: #244744;
+}
+
+[data-theme="dark"] .conf-search {
+  border-color: #38434a;
+  background: #20272b;
+  color: var(--ink);
+}
+
+[data-theme="dark"] .conf-search::placeholder {
+  color: #7d8a91;
+}
+
+[data-theme="dark"] .conf-search:hover {
+  border-color: #5c6b72;
+}
+
+[data-theme="dark"] .conf:hover {
+  border-color: #4a585f;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .conf.tba {
+  background: #181d20;
+  border-color: #2b343a;
+}
+
+@media (min-width: 992px) {
+  [data-theme="dark"] .conf .row > .col-lg-6 + .col-lg-6 {
+    border-left-color: #2b343a;
+  }
+}
+
+[data-theme="dark"] .cycle-tag--1 {
+  background: #1b3945;
+  color: #9fd2e6;
+}
+
+[data-theme="dark"] .cycle-tag--2 {
+  background: #45331a;
+  color: #f0cb94;
+}
+
+[data-theme="dark"] .cycle-tag--4 {
+  background: #2d2f2a;
+  color: #c4c4b6;
+}
+
+[data-theme="dark"] .favorite-star {
+  --star-line: #6f7d85;
+}
+
+[data-theme="dark"] .favorite-star:hover {
+  -webkit-text-stroke-color: #ffc107;
+}
+
+[data-theme="dark"] .favorite-star.active {
+  color: #ffc107;
+  -webkit-text-stroke-color: #ffc107;
+}
+
+[data-theme="dark"] a.conf-meta-item--place {
+  color: #7fcac3;
+  text-decoration-color: #3a6a66;
+}
+
+[data-theme="dark"] a.conf-meta-item--place:hover {
+  color: #a9e3dd;
+  text-decoration-color: #a9e3dd;
+}
+
+[data-theme="dark"] .conf-meta-item--empty,
+[data-theme="dark"] .timer:not(:has(.cd-part)) {
+  color: #75828a;
+}
+
+[data-theme="dark"] .conf-meta-item--date::before {
+  background: #6f8aa3;
+}
+
+[data-theme="dark"] .conf-meta-item--place::before {
+  background: #5f9893;
+}
+
+[data-theme="dark"] .bk-tag--low {
+  background: #2a3237;
+  color: #c7d0d4;
+}
+
+[data-theme="dark"] .deadline-time {
+  color: #e1e6e8;
+}
+
+[data-theme="dark"] .deadline-time.is-link {
+  text-decoration-color: #5c6b72;
+}
+
+[data-theme="dark"] .deadline-time.is-link:hover {
+  text-decoration-color: #e1e6e8;
+}
+
+[data-theme="dark"] .deadline .meta {
+  color: #8b979d;
+}
+
+[data-theme="dark"] .add-calendar-btn {
+  border-color: #38434a;
+  background: #20272b;
+  color: #c7d0d4;
+}
+
+[data-theme="dark"] .add-calendar-btn:hover {
+  background: #263036;
+}
+
+[data-theme="dark"] .d-day-badge[data-urgency="soon"] {
+  background: #4a2c14;
+  color: #f5c39b;
+}
+
+[data-theme="dark"] .d-day-badge[data-urgency="later"] {
+  background: #403713;
+  color: #ecd98b;
+}
+
+[data-theme="dark"] .cd-part i {
+  color: #8b979d;
+}
+
+[data-theme="dark"] .timer.is-urgent .cd-part--days b,
+[data-theme="dark"] .timer.is-urgent .cd-part--days i {
+  color: #e3a0b1;
+}
+
+[data-theme="dark"] ::selection {
+  background: var(--brand);
+  color: #fff;
+}
+
+/* The GitHub star button is a white third-party widget; invert it to sit on the dark pill */
+[data-theme="dark"] .star-pill iframe {
+  filter: invert(0.87);
+}
+
+[data-theme="dark"] footer,
+[data-theme="dark"] .text-muted {
+  color: var(--muted-color) !important;
+}
+
+/* Softer light text: use the page title's colour instead of pure white */
+[data-theme="dark"] .nav-brand,
+[data-theme="dark"] .nav-brand:hover,
+[data-theme="dark"] .nav-lab:hover,
+[data-theme="dark"] .theme-toggle:hover,
+[data-theme="dark"] .calendar-day.has-deadline,
+[data-theme="dark"] ::selection {
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .nav-lab,
+[data-theme="dark"] .theme-toggle {
+  color: rgba(225, 230, 232, 0.88);
+}
+
+/* Bootstrap's dark palette uses near-white for body, headings and emphasis; match the page's soft grey */
+[data-theme="dark"] {
+  --bs-body-color: #e1e6e8;
+  --bs-heading-color: #e1e6e8;
+  --bs-emphasis-color: #e1e6e8;
+  --bs-link-color: #e1e6e8;
+  --bs-link-hover-color: #e1e6e8;
+}
+
+[data-theme="dark"] .nav-brand-title,
+[data-theme="dark"] .nav-lab-long,
+[data-theme="dark"] .nav-lab-short {
+  color: #e1e6e8;
+}
+
+[data-theme="dark"] .month-picker {
+  background: #1b2125;
+}
+
+[data-theme="dark"] .month-cell.is-selected {
+  color: var(--text-color);
 }

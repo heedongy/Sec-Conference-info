@@ -96,6 +96,14 @@ $(function() {
     return deadline;
   }
 
+  // Abbreviation of the visitor's zone (e.g. KST); falls back to a UTC offset when the zone has no abbreviation
+  function localZoneLabel(deadline) {
+    var abbr = deadline.clone().tz(moment.tz.guess()).format('z');
+    return /^[A-Za-z]+$/.test(abbr) ? abbr : 'UTC' + deadline.format('Z');
+  }
+
+  $('#local-zone').text(localZoneLabel(moment()) + ' (UTC' + moment().format('Z') + ')');
+
   function googleCalendarUrl(deadline, title, details) {
     var format = 'YYYYMMDD[T]HHmmss[Z]';
     var start = deadline.clone().utc().format(format);
@@ -105,7 +113,9 @@ $(function() {
   }
 
   function markTba(cardId) {
-    $('#' + cardId).find('.timer, .deadline-time').text('-');
+    var $card = $('#' + cardId);
+    $card.find('.timer').text('TBA');
+    $card.find('.deadline-time').text('-');
     deadlineByConf[cardId] = null;
   }
 
@@ -139,7 +149,7 @@ $(function() {
     var calendarDate = deadline.format('YYYY-MM-DD');
 
     $card.find('.deadline-time')
-      .text(deadline.format('D MMM YYYY, h:mm:ss a'))
+      .text(deadline.format('D MMM YYYY, h:mm:ss a') + ' (' + localZoneLabel(deadline) + ')')
       .addClass('is-link')
       .attr('title', 'Show in calendar')
       .on('click', function() {
@@ -171,6 +181,24 @@ $(function() {
     });
   });
 
+  // ========== Theme ==========
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute('data-bs-theme', theme); // Bootstrap's own dark palette (text-muted, etc.)
+    $('#theme-toggle').attr('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+  }
+
+  applyTheme(document.documentElement.getAttribute('data-theme') || 'light');
+
+  $('#theme-toggle').on('click', function() {
+    var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    try {
+      localStorage.setItem('theme', next);
+    } catch (e) {}
+  });
+
   // ========== Favorites and ordering ==========
 
   function loadFavorites() {
@@ -181,12 +209,20 @@ $(function() {
     }
   }
 
+  // TBA and past cards cannot be pinned, even if an old saved favorite points at one
   function isFavorite(cardId) {
-    return favorites.indexOf(cardId) !== -1;
+    return favorites.indexOf(cardId) !== -1 && !$(document.getElementById(cardId)).is('.tba, .past');
+  }
+
+  function syncStar($star) {
+    var on = $star.hasClass('active');
+    var label = on ? 'Unpin' : 'Pin to top';
+    $star.attr({ title: label, 'aria-label': label });
   }
 
   $('.favorite-star').each(function() {
     $(this).toggleClass('active', isFavorite($(this).data('conf-id')));
+    syncStar($(this));
   });
 
   // Only one favorite at a time; clicking it again clears it
@@ -200,6 +236,7 @@ $(function() {
     if (!wasFavorite) {
       $(this).addClass('active');
     }
+    $('.favorite-star').each(function() { syncStar($(this)); });
 
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
     reorderConferences();
@@ -227,6 +264,13 @@ $(function() {
       return aDeadline.valueOf() - bDeadline.valueOf();
     });
     $('.conf-container').append(cards);
+
+    // A hairline under the pinned card
+    $('.pin-rule').remove();
+    var $pinned = $(cards).filter(function() { return isFavorite(this.id); }).first();
+    if ($pinned.length) {
+      $pinned.after('<div class="pin-rule" aria-hidden="true"></div>');
+    }
   }
 
   reorderConferences();
@@ -426,6 +470,7 @@ $(function() {
     // The details panel keeps the last hovered day until the month changes
     resetDayDetails();
     $('#calendar-title').text(currentMonth.format('MMMM YYYY'));
+    updateTodayButton();
 
     var leadingDays = currentMonth.clone().startOf('month').day();
     var previousMonthDays = currentMonth.clone().subtract(1, 'month').daysInMonth();
@@ -462,6 +507,64 @@ $(function() {
         $(this).trigger('click');
       }
     });
+
+  // ----- Month picker: click the title to jump to any month -----
+  var pickerYear = currentMonth.year();
+  var $picker = $('#month-picker');
+
+  function renderPicker() {
+    var now = moment();
+    $('#picker-year').text(pickerYear);
+    var $months = $('#picker-months').empty();
+    moment.monthsShort().forEach(function(name, m) {
+      var $btn = $('<button type="button" class="month-cell"></button>').text(name).attr('data-month', m);
+      if (pickerYear === currentMonth.year() && m === currentMonth.month()) $btn.addClass('is-selected');
+      if (pickerYear === now.year() && m === now.month()) $btn.addClass('is-today');
+      $months.append($btn);
+    });
+  }
+
+  function setPicker(open) {
+    if (open) {
+      pickerYear = currentMonth.year();
+      renderPicker();
+    }
+    $picker.prop('hidden', !open);
+    $('#calendar-title').attr('aria-expanded', open ? 'true' : 'false');
+  }
+
+  function updateTodayButton() {
+    $('#today-month').prop('disabled', currentMonth.isSame(moment(), 'month'));
+  }
+
+  $('#calendar-title').on('click', function(e) {
+    e.stopPropagation();
+    setPicker($picker.prop('hidden'));
+  });
+
+  $picker.on('click', function(e) { e.stopPropagation(); });
+  $('#prev-year').on('click', function() { pickerYear--; renderPicker(); });
+  $('#next-year').on('click', function() { pickerYear++; renderPicker(); });
+
+  $('#picker-months').on('click', '.month-cell', function() {
+    currentMonth = moment([pickerYear, $(this).data('month'), 1]);
+    setPicker(false);
+    renderCalendar();
+  });
+
+  $('#today-month').on('click', function() {
+    currentMonth = moment();
+    setPicker(false);
+    renderCalendar();
+  });
+
+  $(document).on('click', function() { setPicker(false); });
+  $(document).on('keydown', function(e) {
+    if (e.key === 'Escape' && !$picker.prop('hidden')) {
+      setPicker(false);
+      $('#calendar-title').trigger('focus');
+    }
+  });
 
   $('#prev-month').on('click', function() {
     currentMonth.subtract(1, 'month');

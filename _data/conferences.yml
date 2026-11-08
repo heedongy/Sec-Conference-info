@@ -68,7 +68,7 @@
       deadline:
         - "2026-05-06 23:59"
         - "2026-08-19 23:59"
-      place: Seoul
+      place: Seoul, South Korea
 
 - name: ESORICS
   description: European Symposium on Research in Computer Security
