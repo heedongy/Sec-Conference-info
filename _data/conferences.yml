@@ -14,7 +14,7 @@
   tags: [SEC, CONF, SEC-TOP, BKIF-4]
   editions:
     - year: 2027
-      date: "2027-05-17/2027-05-19"
+      date: "2027-05-17/2027-05-20"
       link: https://sp2027.ieee-security.org/
       deadline:
         - "2026-06-11 23:59"
@@ -55,6 +55,8 @@
     - year: 2028
       date: "2028-08-16/2028-08-18"
       link: https://www.usenix.org/conference/usenixsecurity28
+      deadline:
+        - TBA
       comment: Main research-paper submission deadline TBA.
       place: Seattle, WA, USA
 
@@ -75,7 +77,7 @@
   tags: [SEC, CONF, BKIF-2]
   editions:
     - year: 2027
-      date: "2027-09-13/2027-09-15"
+      date: "2027-09-13/2027-09-17"
       link: https://www.esorics2027.org/home
       deadline:
         - TBA
@@ -202,7 +204,8 @@
         - "2026-06-30 23:59"
       place: Dublin, Ireland
     - year: 2028
-      date: TBA
+      date: "2028-04-29/2028-05-07"
+      link: https://conf.researchr.org/home/icse-2028
       deadline:
         - TBA
       comment: Scheduled for April 2028.
