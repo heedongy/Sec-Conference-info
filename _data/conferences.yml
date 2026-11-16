@@ -214,7 +214,14 @@
 - name: ASE
   description: International Conference on Automated Software Engineering
   tags: [SE, CONF, SE-TOP, BKIF-3]
-  editions: []
+  editions:
+    - year: 2027
+      date: "2027-10-24/2027-10-28"
+      link: https://conf.researchr.org/home/ase-2027
+      deadline:
+        - "2027-03-10"
+      comment: Paper submission deadline on March 10 2027 AoE.
+      place: El Paso, Texas, USA
 
 - name: FSE
   description: Foundations of Software Engineering
