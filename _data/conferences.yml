@@ -207,8 +207,8 @@
       date: "2028-04-29/2028-05-07"
       link: https://conf.researchr.org/home/icse-2028
       deadline:
-        - TBA
-      comment: Scheduled for April 2028.
+        - "2027-07-01 23:59"
+      comment: Abstract deadline on June 24 2027 AoE.
       place: Hawaii, USA
 
 - name: ASE
