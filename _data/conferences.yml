@@ -25,14 +25,6 @@
   description: ACM Conference on Computer and Communications Security
   tags: [SEC, CONF, SEC-TOP, BKIF-4]
   editions:
-    - year: 2026
-      date: "2026-11-15/2026-11-19"
-      link: https://www.sigsac.org/ccs/CCS2026
-      deadline:
-        - "2026-01-14 23:59"
-        - "2026-04-29 23:59"
-      comment: Abstract registration required (1 week before deadline AoE).
-      place: The Hague, The Netherlands
     - year: 2027
       date: "2027-10-11/2027-10-15"
       link: https://www.sigsac.org/ccs/CCS2027/
@@ -104,7 +96,7 @@
       link: https://eurosp2027.ieee-security.org/
       deadline:
         - "2026-12-02 23:59"
-      comment: Abstract registration 25 November 2026 AoE.
+      comment: Abstract deadline on Nov 25 AoE.
       place: Madrid, Spain
 
 - name: IFIP SEC
@@ -220,7 +212,7 @@
       link: https://conf.researchr.org/home/ase-2027
       deadline:
         - "2027-03-10"
-      comment: Paper submission deadline on March 10 2027 AoE.
+      comment: Abstract deadline on Mar 4 2027 AoE.
       place: El Paso, Texas, USA
 
 - name: FSE
@@ -260,6 +252,7 @@
       link: https://conf.researchr.org/home/issta-2027
       deadline:
         - "2027-01-11 23:59"
+      comment: Abstract deadline on Jan 8 2027 AoE.
       place: Singapore
     - year: 2028
       date: TBA
