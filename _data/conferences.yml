@@ -243,6 +243,18 @@
         - "2026-11-12 23:59"
       place: Atlanta, Georgia, USA
 
+- name: OOPSLA
+  description: Object-Oriented Programming, Systems, Languages, and Applications
+  tags: [SE, CONF, SE-TOP, BKIF-4]
+  editions:
+    - year: 2027
+      date: "2027-10-10/2027-10-15"
+      link: https://2027.splashcon.org/track/splashoopsla2027
+      deadline:
+        - "2026-10-14 23:59"
+        - "2027-04-07 23:59"
+      place: Prague, Czechia
+
 - name: ISSTA
   description: International Symposium on Software Testing and Analysis
   tags: [SE, CONF, BKIF-2]
